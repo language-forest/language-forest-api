@@ -14,3 +14,32 @@ paths:
             application/json:
               schema:
                 type: string
+  /hello/json:
+    get:
+      summary: "Hello JSON 엔드포인트"
+      operationId: "getHelloJson"
+      parameters:
+        - $ref: "#/components/parameters/TextQueryParam" # 재사용되는 쿼리 매개변수
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/YourTextDto" # 재사용되는 응답 객체
+
+components:
+  parameters:
+    TextQueryParam:
+      name: text
+      in: query
+      description: "텍스트 입력"
+      required: true
+      schema:
+        type: string
+  schemas:
+    YourTextDto:
+      type: object
+      properties:
+        yourText:
+          type: string
