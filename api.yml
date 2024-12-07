@@ -19,7 +19,7 @@ paths:
   /hello/json:
     get:
       tags:
-        - hello
+        - helloa
       summary: "Hello JSON 엔드포인트"
       operationId: "getHelloJson"
       parameters:
