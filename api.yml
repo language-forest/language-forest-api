@@ -5,6 +5,8 @@ info:
 paths:
   /hello:
     get:
+      tags:
+        - hello
       summary: "Hello 엔드포인트"
       operationId: "getHello"
       responses:
@@ -16,6 +18,8 @@ paths:
                 type: string
   /hello/json:
     get:
+      tags:
+        - hello
       summary: "Hello JSON 엔드포인트"
       operationId: "getHelloJson"
       parameters:
