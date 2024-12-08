@@ -96,14 +96,5 @@ components:
         email:
           type: string
           description: "유저 이메일"
-        startAtMillis:
-          type: integer
-          description: "유저 시작 시간 (밀리초 단위)"
-        endAtMillis:
-          type: integer
-          description: "유저 종료 시간 (밀리초 단위)"
       required:
         - id
-        - email
-        - startAtMillis
-        - endAtMillis
