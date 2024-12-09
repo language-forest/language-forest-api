@@ -92,6 +92,7 @@ components:
       properties:
         id:
           type: string
+          format: uuid
           description: "유저 ID"
         email:
           type: string
