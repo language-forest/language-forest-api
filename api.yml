@@ -3,34 +3,6 @@ info:
   title: Sample API
   version: 1.0.0
 paths:
-  /hello:
-    get:
-      tags:
-        - hello
-      summary: "Hello 엔드포인트"
-      operationId: "getHello"
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: string
-  /hello/json:
-    get:
-      tags:
-        - hello
-      summary: "Hello JSON 엔드포인트"
-      operationId: "getHelloJson"
-      parameters:
-        - $ref: "#/components/parameters/TextQueryParam"
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/YourTextDto"
   /auth/google:
     post:
       tags:
@@ -43,6 +15,31 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/TokenDto" # 요청 DTO
+      responses:
+        "200":
+          description: JWT 토큰 발급 성공
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenDto" # 응답 DTO
+  /auth/refresh:
+    post:
+      tags:
+        - auth
+      summary: "서버에서 발급한 refresh token을 통해 accessToken을 다시 받아옵니다. "
+      operationId: "authRefresh"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+                  description: "리프레시 토큰"
+              required:
+                - refreshToken
       responses:
         "200":
           description: JWT 토큰 발급 성공
@@ -65,26 +62,14 @@ paths:
                 $ref: "#/components/schemas/UserInfoDto"
 
 components:
-  parameters:
-    TextQueryParam:
-      name: text
-      in: query
-      description: "텍스트 입력"
-      required: true
-      schema:
-        type: string
   schemas:
-    YourTextDto:
-      type: object
-      properties:
-        yourText:
-          type: string
     TokenDto:
       type: object
       properties:
         accessToken:
           type: string
-          description: "Google OAuth Token"
+        refreshToken:
+          type: string
       required:
         - accessToken
     UserInfoDto:
