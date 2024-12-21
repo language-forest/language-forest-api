@@ -109,13 +109,9 @@ components:
           type: string
           format: uuid
         language:
-          type: string
-          enum: [EN, KO]
-          description: "학습 언어"
+          $ref: "#/components/schemas/LanguageEnum"
         level:
-          type: string
-          enum: [EASY, NORMAL, HARD]
-          description: "학습 레벨"
+          $ref: "#/components/schemas/LevelEnum"
         purpose:
           type: string
           description: "학습 목적"
@@ -140,10 +136,11 @@ components:
           type: string
           format: date
           description: "유저 생년월일 (yyyy-MM-dd)"
-        gender:
+        gender: 
           type: string
-          description: "유저 성별"
-          enum: [MALE, FEMALE, OTHER]
+          $ref: "#/components/schemas/LevelEnum"
+
+
       required:
         - id
         - email
@@ -180,3 +177,16 @@ components:
             - birthday
             - gender
             - studyLanguages
+
+    LanguageEnum:
+      type: string
+      enum: [EN, KO]
+      description: "학습 언어"
+    LevelEnum:
+      type: string
+      enum: [EASY, NORMAL, HARD]
+      description: "학습 레벨"
+    genderEnum:
+      type: string
+      description: "유저 성별"
+      enum: [MALE, FEMALE, OTHER]
