@@ -75,7 +75,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateUserInfoDto"
+              $ref: "#/components/schemas/UserInfoDto"
       responses:
         "200":
           description: "업데이트 성공"
@@ -136,31 +136,14 @@ components:
           type: string
           format: date
           description: "유저 생년월일 (yyyy-MM-dd)"
-        gender: 
+        gender:
           type: string
           $ref: "#/components/schemas/LevelEnum"
-
-
       required:
         - id
         - email
-        - username
-        - birthday
-        - gender
 
     UserInfoDto:
-      allOf:
-        - $ref: "#/components/schemas/BaseUserInfo"
-        - type: object
-          properties:
-            studyLanguages:
-              type: array
-              items:
-                $ref: "#/components/schemas/BaseUserStudyLanguage"
-          required:
-            - studyLanguages
-
-    UpdateUserInfoDto:
       allOf:
         - $ref: "#/components/schemas/BaseUserInfo"
         - type: object
@@ -171,12 +154,6 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/BaseUserStudyLanguage"
-
-          required:
-            - username
-            - birthday
-            - gender
-            - studyLanguages
 
     LanguageEnum:
       type: string
