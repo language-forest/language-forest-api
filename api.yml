@@ -50,15 +50,52 @@ paths:
               schema:
                 $ref: "#/components/schemas/TokenDto"
 
-  /user/me:
+  /user=info/me:
     get:
       tags:
         - user
       summary: "내 유저 정보를 가져옵니다."
-      operationId: "getUserInfo"
+      operationId: "getUserInfoMe"
       responses:
         "200":
           description: "유저 정보 조회 성공"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserInfoDto"
+
+  /user-info:
+    post:
+      tags:
+        - user
+      summary: "최초에 유저 언어 학습정보를 포함한 유저 정보를 생성합니다"
+      operationId: "createUserInfo"
+      description: "최초 유저 회원가입 때 사용하는 api입니다"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/BaseUser"
+                - type: object
+                  properties:
+                    id:
+                      readOnly: true
+                    studyLanguages:
+                      type: array
+                      items:
+                        allOf:
+                          - $ref: "#/components/schemas/BaseUserStudyLanguage"
+                          - type: object
+                            properties:
+                              id:
+                                readOnly: true
+                            required:
+                              - uid
+      responses:
+        "200":
+          description: "업데이트 성공"
           content:
             application/json:
               schema:
@@ -68,21 +105,55 @@ paths:
     patch:
       tags:
         - user
-      summary: "유저 정보를 업데이트합니다."
-      operationId: "updateUserInfo"
+      summary: "유저에 대한 정보를 수정합니다."
+      operationId: "updateUser"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserInfoDto"
+              $ref: "#/components/schemas/BaseUser"
+
       responses:
-        "200":
+        "201":
           description: "업데이트 성공"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserInfoDto"
+                $ref: "#/components/schemas/BaseUser"
+
+  /user/study-language/{userStudyLanguageId}:
+    patch:
+      tags:
+        - user
+      summary: "유저의 학습에 대한 정보를 변경합니다"
+      operationId: "updateUserStudyLanguage"
+      parameters:
+        - name: userStudyLanguageId
+          in: path
+          required: true
+          description: "수정할 유저 학습 언어 정보의 ID"
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/BaseUserStudyLanguage"
+                - type: object
+                  properties:
+                    id:
+                      readOnly: true
+      responses:
+        "201":
+          description: "업데이트 성공"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseUserStudyLanguage"
 
 components:
   schemas:
@@ -103,7 +174,6 @@ components:
           readOnly: true
           type: string
           format: uuid
-          nullable: true
         uid:
           readOnly: true
           type: string
@@ -119,7 +189,7 @@ components:
         - id
         - uid
 
-    BaseUserInfo:
+    BaseUser:
       type: object
       properties:
         id:
@@ -138,17 +208,18 @@ components:
           description: "유저 생년월일 (yyyy-MM-dd)"
         gender:
           type: string
-          $ref: "#/components/schemas/LevelEnum"
+          $ref: "#/components/schemas/GenderEnum"
+        language:
+          type: string
+          $ref: "#/components/schemas/LanguageEnum"
       required:
         - id
 
     UserInfoDto:
       allOf:
-        - $ref: "#/components/schemas/BaseUserInfo"
+        - $ref: "#/components/schemas/BaseUser"
         - type: object
           properties:
-            id:
-              readOnly: true
             studyLanguages:
               type: array
               items:
@@ -162,7 +233,7 @@ components:
       type: string
       enum: [EASY, NORMAL, HARD]
       description: "학습 레벨"
-    genderEnum:
+    GenderEnum:
       type: string
       description: "유저 성별"
       enum: [MALE, FEMALE, OTHER]
