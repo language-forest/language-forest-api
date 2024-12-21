@@ -141,7 +141,6 @@ components:
           $ref: "#/components/schemas/LevelEnum"
       required:
         - id
-        - email
 
     UserInfoDto:
       allOf:
