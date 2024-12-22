@@ -117,7 +117,6 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/BaseUser"
-
       responses:
         "201":
           description: "업데이트 성공"
@@ -146,7 +145,6 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/UpdateUserStudyLanguageRequest"
-
       responses:
         "201":
           description: "업데이트 성공"
@@ -157,6 +155,27 @@ paths:
 
 components:
   schemas:
+    # 공통 타임스탬프 스키마
+    Timestamped:
+      type: object
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+          description: "생성 일시"
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          description: "수정 일시"
+          readOnly: true
+        deletedAt:
+          type: string
+          format: date-time
+          description: "삭제 일시"
+          readOnly: true
+      required: [createdAt, updateAt]
+
     TokenDto:
       type: object
       properties:
@@ -167,24 +186,26 @@ components:
       required: [accessToken]
 
     BaseUserStudyLanguage:
-      type: object
-      properties:
-        id:
-          readOnly: true
-          type: string
-          format: uuid
-        uid:
-          readOnly: true
-          type: string
-          format: uuid
-        language:
-          $ref: "#/components/schemas/LanguageEnum"
-        level:
-          $ref: "#/components/schemas/LevelEnum"
-        purpose:
-          type: string
-          description: "학습 목적"
-      required: [id, uid, language, level, purpose]
+      allOf:
+        - $ref: "#/components/schemas/Timestamped"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              readOnly: true
+            uid:
+              type: string
+              format: uuid
+              readOnly: true
+            language:
+              $ref: "#/components/schemas/LanguageEnum"
+            level:
+              $ref: "#/components/schemas/LevelEnum"
+            purpose:
+              type: string
+              description: "학습 목적"
+          required: [id, uid, language, level, purpose]
 
     UpdateUserStudyLanguageRequest:
       allOf:
@@ -193,38 +214,43 @@ components:
           properties:
             language:
               $ref: "#/components/schemas/LanguageEnum"
-              nullable: true # 필드가 nullable임
+              nullable: true
             level:
               $ref: "#/components/schemas/LevelEnum"
-              nullable: true # 필드가 nullable임
+              nullable: true
             purpose:
               type: string
-              nullable: true # 필드가 nullable임
+              nullable: true
+          required: [uid, language, level, purpose]
 
     BaseUser:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: "유저 ID"
-        email:
-          type: string
-          description: "유저 이메일"
-        username:
-          type: string
-          description: "유저 이름"
-        birthday:
-          type: string
-          format: date
-          description: "유저 생년월일 (yyyy-MM-dd)"
-        gender:
-          type: string
-          $ref: "#/components/schemas/GenderEnum"
-        language:
-          type: string
-          $ref: "#/components/schemas/LanguageEnum"
-      required: [id]
+      allOf:
+        - $ref: "#/components/schemas/Timestamped"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: "유저 ID"
+            email:
+              type: string
+              description: "유저 이메일"
+            username:
+              type: string
+              description: "유저 이름"
+            birthday:
+              type: string
+              format: date
+              description: "유저 생년월일 (yyyy-MM-dd)"
+            gender:
+              type: string
+              enum: [MALE, FEMALE, OTHER]
+              description: "유저 성별"
+            language:
+              type: string
+              enum: [EN, KO]
+              description: "학습 언어"
+          required: [id]
 
     UserInfoDto:
       allOf:
@@ -240,11 +266,13 @@ components:
       type: string
       enum: [EN, KO]
       description: "학습 언어"
+
     LevelEnum:
       type: string
       enum: [EASY, NORMAL, HARD]
       description: "학습 레벨"
+
     GenderEnum:
       type: string
-      description: "유저 성별"
       enum: [MALE, FEMALE, OTHER]
+      description: "유저 성별"
