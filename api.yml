@@ -93,6 +93,9 @@ paths:
                                 readOnly: true
                             required:
                               - uid
+                              - language
+                              - level
+                              - purpose
       responses:
         "200":
           description: "업데이트 성공"
