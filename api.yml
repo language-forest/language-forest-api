@@ -176,7 +176,6 @@ components:
           format: date-time
           description: "삭제 일시"
           readOnly: true
-      required: [createdAt, updateAt]
 
     TokenDto:
       type: object
