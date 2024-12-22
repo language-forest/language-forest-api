@@ -90,6 +90,7 @@ paths:
                           - type: object
                             properties:
                               id:
+                                nullable: true
                                 readOnly: true
                             required:
                               - uid
@@ -149,6 +150,7 @@ paths:
                 - type: object
                   properties:
                     id:
+                      nullable: true
                       readOnly: true
       responses:
         "201":
