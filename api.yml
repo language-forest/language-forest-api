@@ -150,8 +150,16 @@ paths:
                 - type: object
                   properties:
                     id:
-                      nullable: true
                       readOnly: true
+                    uid:
+                      readOnly: true
+                    language:
+                      nullable: true
+                    level:
+                      nullable: true
+                    purpose:
+                      nullable: true
+
       responses:
         "201":
           description: "업데이트 성공"
