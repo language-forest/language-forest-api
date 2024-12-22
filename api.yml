@@ -145,20 +145,7 @@ paths:
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: "#/components/schemas/BaseUserStudyLanguage"
-                - type: object
-                  properties:
-                    id:
-                      readOnly: true
-                    uid:
-                      readOnly: true
-                    language:
-                      nullable: true
-                    level:
-                      nullable: true
-                    purpose:
-                      nullable: true
+              $ref: "#/components/schemas/UpdateUserStudyLanguageRequest"
 
       responses:
         "201":
@@ -177,8 +164,7 @@ components:
           type: string
         refreshToken:
           type: string
-      required:
-        - accessToken
+      required: [accessToken]
 
     BaseUserStudyLanguage:
       type: object
@@ -198,9 +184,22 @@ components:
         purpose:
           type: string
           description: "학습 목적"
-      required:
-        - id
-        - uid
+      required: [id, uid, language, level, purpose]
+
+    UpdateUserStudyLanguageRequest:
+      allOf:
+        - $ref: "#/components/schemas/BaseUserStudyLanguage"
+        - type: object
+          properties:
+            language:
+              $ref: "#/components/schemas/LanguageEnum"
+              nullable: true # 필드가 nullable임
+            level:
+              $ref: "#/components/schemas/LevelEnum"
+              nullable: true # 필드가 nullable임
+            purpose:
+              type: string
+              nullable: true # 필드가 nullable임
 
     BaseUser:
       type: object
@@ -225,8 +224,7 @@ components:
         language:
           type: string
           $ref: "#/components/schemas/LanguageEnum"
-      required:
-        - id
+      required: [id]
 
     UserInfoDto:
       allOf:
