@@ -92,6 +92,7 @@ paths:
                               id:
                                 type: string
                                 format: uuid
+                                nullable: true
                                 readOnly: true
                             required:
                               - uid
