@@ -90,7 +90,8 @@ paths:
                           - type: object
                             properties:
                               id:
-                                nullable: true
+                                type: string
+                                format: uuid
                                 readOnly: true
                             required:
                               - uid
