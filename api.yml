@@ -245,13 +245,9 @@ components:
               format: date
               description: "유저 생년월일 (yyyy-MM-dd)"
             gender:
-              type: string
-              enum: [MALE, FEMALE, OTHER]
-              description: "유저 성별"
+              $ref: "#/components/schemas/GenderEnum"
             language:
-              type: string
-              enum: [EN, KO]
-              description: "학습 언어"
+              $ref: "#/components/schemas/LanguageEnum"
           required: [id]
 
     UserInfoDto:
