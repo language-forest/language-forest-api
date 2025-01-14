@@ -50,7 +50,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/TokenDto"
 
-  /users:
+  /user:
     post:
       tags:
         - user
