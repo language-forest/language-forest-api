@@ -107,6 +107,21 @@ components:
       enum: [A, B, C, D, E]
       description: "학습 수준 (A/B/C/D/E)"
 
+    NotificationEnum:
+      type: string
+      enum: [DAILY_STUDY]
+      description: "push 알림 타입입니다."
+
+    NotificationStatusEnum:
+      type: string
+      enum: [SUCCESS, FAIL, SCHEDULE, CANCEL]
+      description: "push 상태를 관리하는 enum입니다."
+
+    PointEnum:
+      type: string
+      enum: [DAILY_STUDY]
+      description: "유저가 포인트에 대한 조건을 구분하는 enum입니다."
+
     # -----------------------------------------------------------
     # BaseUser : UserEntity가 가진 주요 필드
     # (nickname, language 등을 포함)
