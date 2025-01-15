@@ -122,6 +122,11 @@ components:
       enum: [DAILY_STUDY]
       description: "유저가 포인트에 대한 조건을 구분하는 enum입니다."
 
+    VoiceTypeEnum:
+      type: string
+      enum: [A, B, C]
+      description: "ai 목소리에 맵핑되는 enum입니다."
+
     # -----------------------------------------------------------
     # BaseUser : UserEntity가 가진 주요 필드
     # (nickname, language 등을 포함)
@@ -163,10 +168,6 @@ components:
           type: string
           description: "옵션 - 관심사"
           nullable: true
-        level:
-          $ref: "#/components/schemas/LevelEnum"
-          description: "옵션 - 학습 수준"
-          nullable: true
         purpose:
           type: string
           description: "옵션 - 학습 목적"
@@ -185,13 +186,52 @@ components:
           nullable: true
 
     # -----------------------------------------------------------
+    # BaseUserStudyInfo : UserStudyInfoEntity가 가진 필드들
+    # -----------------------------------------------------------
+    BaseUserStudyInfo:
+      type: object
+      properties:
+        level:
+          $ref: "#/components/schemas/LevelEnum"
+          description: "학습 난이도"
+        voiceType:
+          $ref: "#/components/schemas/VoiceTypeEnum"
+          description: "ai 목소리 타입"
+        sentenceAmount:
+          type: integer
+          format: int32
+          description: "학습할 문장 수"
+
+    # -----------------------------------------------------------
     # CreateUserRequest : User 생성 요청
     #  => BaseUser + BaseUserInfo 를 상속(allOf)해서 합치기
     # -----------------------------------------------------------
     CreateUserRequest:
       allOf:
-        - $ref: "#/components/schemas/BaseUser"
-        - $ref: "#/components/schemas/BaseUserInfo"
+        - type: object
+          properties:
+            user:
+              $ref: "#/components/schemas/BaseUser"
+        - type: object
+          properties:
+            userInfo:
+              $ref: "#/components/schemas/BaseUserInfo"
+        - type: object
+          properties:
+            userStudyInfo:
+              $ref: "#/components/schemas/BaseUserStudyInfo"
+        - type: object
+          properties:
+            userStudyInfo:
+              allOf:
+                - $ref: "#/components/schemas/BaseUserStudyInfo"
+                - type: object
+                  properties:
+                    level:
+                      $ref: "#/components/schemas/LevelEnum"
+                  required:
+                    - level
+                  additionalProperties: false
 
     # -----------------------------------------------------------
     # UserResponse : User 조회 응답
@@ -200,9 +240,15 @@ components:
     # -----------------------------------------------------------
     UserResponse:
       allOf:
+        - type: object
+          properties:
+            user:
+              $ref: "#/components/schemas/BaseUser"
+        - type: object
+          properties:
+            userInfo:
+              $ref: "#/components/schemas/BaseUserInfo"
         - $ref: "#/components/schemas/Timestamped"
-        - $ref: "#/components/schemas/BaseUser"
-        - $ref: "#/components/schemas/BaseUserInfo"
         - type: object
           properties:
             uid:
@@ -217,8 +263,14 @@ components:
     # -----------------------------------------------------------
     GoogleLoginRequest:
       allOf:
-        - $ref: "#/components/schemas/BaseUser"
-        - $ref: "#/components/schemas/TokenDto"
+        - type: object
+          properties:
+            user:
+              $ref: "#/components/schemas/TokenDto"
+        - type: object
+          properties:
+            token:
+              $ref: "#/components/schemas/TokenDto"
 
     # -----------------------------------------------------------
     # JWT 토큰 DTO
