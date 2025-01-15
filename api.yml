@@ -207,31 +207,26 @@ components:
     #  => BaseUser + BaseUserInfo 를 상속(allOf)해서 합치기
     # -----------------------------------------------------------
     CreateUserRequest:
-      allOf:
-        - type: object
-          properties:
-            user:
-              $ref: "#/components/schemas/BaseUser"
-        - type: object
-          properties:
-            userInfo:
-              $ref: "#/components/schemas/BaseUserInfo"
-        - type: object
-          properties:
-            userStudyInfo:
-              $ref: "#/components/schemas/BaseUserStudyInfo"
-        - type: object
-          properties:
-            userStudyInfo:
-              allOf:
-                - $ref: "#/components/schemas/BaseUserStudyInfo"
-                - type: object
-                  properties:
-                    level:
-                      $ref: "#/components/schemas/LevelEnum"
-                  required:
-                    - level
-                  additionalProperties: false
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/BaseUser"
+        userInfo:
+          $ref: "#/components/schemas/BaseUserInfo"
+        userStudyInfo:
+          allOf:
+            - $ref: "#/components/schemas/BaseUserStudyInfo"
+            - type: object
+              properties:
+                level:
+                  $ref: "#/components/schemas/LevelEnum"
+              required:
+                - level
+              additionalProperties: false
+      required:
+        - user
+        - userInfo
+        - userStudyInfo
 
     # -----------------------------------------------------------
     # UserResponse : User 조회 응답
