@@ -134,6 +134,9 @@ components:
     BaseUser:
       type: object
       properties:
+        uid:
+          type: string
+          format: uuid
         nickname:
           type: string
           description: "유저 닉네임 (필수)"
@@ -151,6 +154,9 @@ components:
     BaseUserInfo:
       type: object
       properties:
+        uid:
+          type: string
+          format: uuid
         gender:
           $ref: "#/components/schemas/GenderEnum"
           description: "옵션 - 성별"
@@ -191,6 +197,12 @@ components:
     BaseUserStudyInfo:
       type: object
       properties:
+        id:
+          type: string
+          format: uuid
+        uid:
+          type: string
+          format: uuid
         level:
           $ref: "#/components/schemas/LevelEnum"
           description: "학습 난이도"
@@ -210,14 +222,26 @@ components:
       type: object
       properties:
         user:
-          $ref: "#/components/schemas/BaseUser"
+          allOf:
+            - $ref: "#/components/schemas/BaseUser"
+            - type: object
+              properties:
+                uid:
+                  readOnly: true # uid는 요청에서 제외됨
         userInfo:
-          $ref: "#/components/schemas/BaseUserInfo"
+          allOf:
+            - $ref: "#/components/schemas/BaseUserInfo"
+            - type: object
+              properties:
+                uid:
+                  readOnly: true # uid는 요청에서 제외됨
         userStudyInfo:
           allOf:
             - $ref: "#/components/schemas/BaseUserStudyInfo"
             - type: object
               properties:
+                id:
+                  readOnly: true # id는 요청에서 제외됨
                 level:
                   $ref: "#/components/schemas/LevelEnum"
               required:
@@ -244,13 +268,6 @@ components:
             userInfo:
               $ref: "#/components/schemas/BaseUserInfo"
         - $ref: "#/components/schemas/Timestamped"
-        - type: object
-          properties:
-            uid:
-              type: string
-              format: uuid
-              description: "UserEntity.uid (서버에서 생성)"
-              readOnly: true
 
     # -----------------------------------------------------------
     # GoogleLoginRequest :
