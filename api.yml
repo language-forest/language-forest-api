@@ -267,7 +267,10 @@ components:
           properties:
             userInfo:
               $ref: "#/components/schemas/BaseUserInfo"
-        - $ref: "#/components/schemas/Timestamped"
+        - type: object
+          properties:
+            userStudyInfo:
+              $ref: "#/components/schemas/BaseUserStudyInfo"
 
     # -----------------------------------------------------------
     # GoogleLoginRequest :
