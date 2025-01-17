@@ -222,29 +222,34 @@ components:
       type: object
       properties:
         user:
-          $ref: "#/components/schemas/BaseUser"
-          properties:
-            uid:
-              readOnly: true # uid는 요청에서 제외됨
+          allOf:
+            - $ref: "#/components/schemas/BaseUser"
+            - type: object
+              properties:
+                uid:
+                  readOnly: true # uid는 요청에서 제외됨
         userInfo:
-          $ref: "#/components/schemas/BaseUserInfo"
-          properties:
-            uid:
-              readOnly: true # uid는 요청에서 제외됨
+          allOf:
+            - $ref: "#/components/schemas/BaseUserInfo"
+            - type: object
+              properties:
+                uid:
+                  readOnly: true # uid는 요청에서 제외됨
         userStudyInfo:
-          $ref: "#/components/schemas/BaseUserStudyInfo"
-          type: object
-          properties:
-            uid:
-              readOnly: true
-            id:
-              readOnly: true
-            voiceType:
-              readOnly: true
-            sentenceAmount:
-              readOnly: true
-          required:
-            - level
+          allOf:
+            - $ref: "#/components/schemas/BaseUserStudyInfo"
+            - type: object
+              properties:
+                uid:
+                  readOnly: true
+                id:
+                  readOnly: true
+                voiceType:
+                  readOnly: true
+                sentenceAmount:
+                  readOnly: true
+              required:
+                - level
       required: [user, userInfo, userStudyInfo]
 
     # -----------------------------------------------------------
