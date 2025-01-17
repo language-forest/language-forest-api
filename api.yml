@@ -143,9 +143,7 @@ components:
         language:
           type: string
           description: "대표 언어 (필수)"
-      required:
-        - nickname
-        - language
+      required: [nickname, language]
 
     # -----------------------------------------------------------
     # BaseUserInfo : UserInfoEntity가 가진 필드들
@@ -214,6 +212,8 @@ components:
           format: int32
           description: "학습할 문장 수"
 
+      required: [level, voiceType, sentenceAmount]
+
     # -----------------------------------------------------------
     # CreateUserRequest : User 생성 요청
     #  => BaseUser + BaseUserInfo 를 상속(allOf)해서 합치기
@@ -240,17 +240,17 @@ components:
             - $ref: "#/components/schemas/BaseUserStudyInfo"
             - type: object
               properties:
+                uid:
+                  readOnly: true
                 id:
-                  readOnly: true # id는 요청에서 제외됨
-                level:
-                  $ref: "#/components/schemas/LevelEnum"
+                  readOnly: true
+                voiceType:
+                  readOnly: true
+                sentenceAmount:
+                  readOnly: true
               required:
                 - level
-              additionalProperties: false
-      required:
-        - user
-        - userInfo
-        - userStudyInfo
+      required: [user, userInfo, userStudyInfo]
 
     # -----------------------------------------------------------
     # UserResponse : User 조회 응답
@@ -294,5 +294,4 @@ components:
           type: string
         refreshToken:
           type: string
-      required:
-        - accessToken
+      required: [accessToken]
