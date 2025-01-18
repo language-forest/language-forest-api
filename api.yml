@@ -293,21 +293,17 @@ components:
     #  => googleId, email, name(옵션) + (BaseUser) nickname/language 필수
     # -----------------------------------------------------------
     GoogleLoginRequest:
-      allOf:
-        # 처음에 유저가 지금 사용하는 언어를 저장하기 위해 BaseUser의 정보를 받을 수 있도록 합니다.
-        - type: object
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/BaseUser"
           properties:
-            user:
-              $ref: "#/components/schemas/BaseUser"
-              properties:
-                nickname:
-                  readOnly: true
-                uid:
-                  readOnly: true
-        - type: object
-          properties:
-            token:
-              $ref: "#/components/schemas/TokenDto"
+            nickname:
+              readOnly: true
+            uid:
+              readOnly: true
+        token:
+          $ref: "#/components/schemas/TokenDto"
       required: [user, token]
 
     # -----------------------------------------------------------
