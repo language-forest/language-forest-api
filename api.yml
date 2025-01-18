@@ -248,9 +248,9 @@ components:
             - type: object
               properties:
                 uid: 
-                  type: null
+                  type: [string, null]
                 nickname:
-                  type: null
+                  type: [string, null]
                   
         userInfo:
           allOf:
