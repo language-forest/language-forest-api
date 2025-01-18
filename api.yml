@@ -114,7 +114,7 @@ components:
     # -----------------------------------------------------------
     LanguageEnum:
       type: string
-      enum: [JA, ZH, FR ES, DE, EN, KO]
+      enum: [JA, ZH, FR, ES, DE, EN, KO]
       description: "일본어, 중국어, 프랑스어, 스페인어, 독일어, 영어, 한국어"
 
     GenderEnum:
@@ -248,9 +248,9 @@ components:
             - type: object
               properties:
                 uid: 
-                  not: {}
+                  readOnly: true
                 nickname:
-                  not: {}
+                  readOnly: true
                   
         userInfo:
           allOf:
@@ -258,20 +258,20 @@ components:
             - type: object
               properties:
                 uid:
-                  writeOnly: true # uid는 요청에서 제외됨
+                  readOnly: true # uid는 요청에서 제외됨
         userStudyInfo:
           allOf:
             - $ref: "#/components/schemas/BaseUserStudyInfo"
             - type: object
               properties:
                 uid:
-                  writeOnly: true
+                  readOnly: true
                 id:
-                  writeOnly: true
+                  readOnly: true
                 voiceType:
-                  writeOnly: true
+                  readOnly: true
                 sentenceAmount:
-                  writeOnly: true
+                  readOnly: true
               required:
                 - level
       required: [user, userInfo, userStudyInfo]
