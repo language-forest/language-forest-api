@@ -296,10 +296,6 @@ components:
       allOf:
         - type: object
           properties:
-            user:
-              $ref: "#/components/schemas/TokenDto"
-        - type: object
-          properties:
             token:
               $ref: "#/components/schemas/TokenDto"
 
