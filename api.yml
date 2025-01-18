@@ -245,30 +245,30 @@ components:
         user:
           allOf:
             - $ref: "#/components/schemas/BaseUser"
-            - type: object
-              properties:
-                uid:
-                  readOnly: true # uid는 요청에서 제외됨
+              not:
+                required:[uid]
         userInfo:
           allOf:
             - $ref: "#/components/schemas/BaseUserInfo"
             - type: object
               properties:
                 uid:
-                  readOnly: true # uid는 요청에서 제외됨
+                  not: {}
+                language:
+                  not: {}
         userStudyInfo:
           allOf:
             - $ref: "#/components/schemas/BaseUserStudyInfo"
             - type: object
               properties:
                 uid:
-                  readOnly: true
+                  writeOnly: true
                 id:
-                  readOnly: true
+                  writeOnly: true
                 voiceType:
-                  readOnly: true
+                  writeOnly: true
                 sentenceAmount:
-                  readOnly: true
+                  writeOnly: true
               required:
                 - level
       required: [user, userInfo, userStudyInfo]
