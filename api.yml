@@ -158,7 +158,7 @@ components:
         language:
           type: string
           description: "대표 언어 (필수)"
-      required: [nickname, language]
+      required: [uid, nickname, language]
 
     # -----------------------------------------------------------
     # BaseUserInfo : UserInfoEntity가 가진 필드들
@@ -203,6 +203,7 @@ components:
           type: string
           description: "옵션 - MBTI"
           nullable: true
+      required: [uid]
 
     # -----------------------------------------------------------
     # BaseUserStudyInfo : UserStudyInfoEntity가 가진 필드들
@@ -227,7 +228,7 @@ components:
           format: int32
           description: "학습할 문장 수"
 
-      required: [level, voiceType, sentenceAmount]
+      required: [id, uid, level, voiceType, sentenceAmount]
 
     # -----------------------------------------------------------
     # CreateUserRequest : User 생성 요청
