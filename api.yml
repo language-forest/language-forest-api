@@ -8,7 +8,7 @@ paths:
     post:
       tags:
         - auth
-      summary: "Google 로그인을 요청합니다 (nickname, language 필수)."
+      summary: "Google 로그인을 요청합니다."
       operationId: "googleLogin"
       requestBody:
         required: true
@@ -112,6 +112,11 @@ components:
     # -----------------------------------------------------------
     # Enum 정의
     # -----------------------------------------------------------
+    LanguageEnum:
+      type: string
+      enum: [JA, ZH, FR ES, DE, EN, KO]
+      description: "일본어, 중국어, 프랑스어, 스페인어, 독일어, 영어, 한국어"
+
     GenderEnum:
       type: string
       enum: [MALE, FEMALE, OTHER]
@@ -156,7 +161,7 @@ components:
           type: string
           description: "유저 닉네임 (필수)"
         language:
-          type: string
+          $ref: "#/components/schemas/LanguageEnum"
           description: "대표 언어 (필수)"
       required: [uid, nickname, language]
 
@@ -192,7 +197,7 @@ components:
           description: "옵션 - 학습 목적"
           nullable: true
         languageSecond:
-          type: string
+          $ref: "#/components/schemas/LanguageEnum"
           description: "옵션 - 2차 언어 (ex. JP)"
           nullable: true
         studyPlace:
@@ -296,7 +301,7 @@ components:
       type: object
       properties:
         language:
-          type: string
+          $ref: "#/components/schemas/LanguageEnum"
           description: "디바이스의 언어를 가져옵니다."
         token:
           $ref: "#/components/schemas/TokenDto"
