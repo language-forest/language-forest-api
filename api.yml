@@ -308,6 +308,7 @@ components:
           properties:
             token:
               $ref: "#/components/schemas/TokenDto"
+      required: [user, token]
 
     # -----------------------------------------------------------
     # JWT 토큰 DTO
