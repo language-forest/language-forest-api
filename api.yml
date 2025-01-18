@@ -247,7 +247,6 @@ components:
             - type: object
               properties:
                 uid: false
-                nickname: false
               additionalProperties: true
 
         userInfo:
