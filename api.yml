@@ -296,12 +296,13 @@ components:
       type: object
       properties:
         user:
-          $ref: "#/components/schemas/BaseUser"
-          properties:
-            nickname:
-              readOnly: true
-            uid:
-              readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/BaseUser"
+            - properties:
+                nickname:
+                  readOnly: true
+                uid:
+                  readOnly: true
         token:
           $ref: "#/components/schemas/TokenDto"
       required: [user, token]
