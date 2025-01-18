@@ -251,27 +251,22 @@ components:
               additionalProperties: true
 
         userInfo:
-          allOf:
+          oneOf:
             - $ref: "#/components/schemas/BaseUserInfo"
             - type: object
               properties:
-                uid:
-                  readOnly: true # uid는 요청에서 제외됨
+                uid: false
+              additionalProperties: true
         userStudyInfo:
-          allOf:
+          oneOf:
             - $ref: "#/components/schemas/BaseUserStudyInfo"
             - type: object
               properties:
-                uid:
-                  readOnly: true
-                id:
-                  readOnly: true
-                voiceType:
-                  readOnly: true
-                sentenceAmount:
-                  readOnly: true
-              required:
-                - level
+                uid: false
+                id: false
+                voiceType: false
+                sentenceAmount: false
+              additionalProperties: true
       required: [user, userInfo, userStudyInfo]
 
     # -----------------------------------------------------------
