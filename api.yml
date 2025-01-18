@@ -245,17 +245,22 @@ components:
         user:
           allOf:
             - $ref: "#/components/schemas/BaseUser"
-              not:
-                required:[uid]
+            - type: object
+              properties:
+                uid:
+                  not: {}
+                nickname:
+                  not: {} # uid는 요청에서 제외됨
+
+
+                  
         userInfo:
           allOf:
             - $ref: "#/components/schemas/BaseUserInfo"
             - type: object
               properties:
                 uid:
-                  not: {}
-                language:
-                  not: {}
+                  writeOnly: true # uid는 요청에서 제외됨
         userStudyInfo:
           allOf:
             - $ref: "#/components/schemas/BaseUserStudyInfo"
