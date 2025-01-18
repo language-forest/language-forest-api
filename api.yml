@@ -293,9 +293,7 @@ components:
     #  => googleId, email, name(옵션) + (BaseUser) nickname/language 필수
     # -----------------------------------------------------------
     GoogleLoginRequest:
-      properties:
-        token:
-          $ref: "#/components/schemas/TokenDto"
+      $ref: "#/components/schemas/TokenDto"
 
     # -----------------------------------------------------------
     # JWT 토큰 DTO
