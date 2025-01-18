@@ -299,6 +299,11 @@ components:
           properties:
             user:
               $ref: "#/components/schemas/BaseUser"
+              properties:
+                nickname:
+                  readOnly: true
+                uid:
+                  readOnly: true
         - type: object
           properties:
             token:
