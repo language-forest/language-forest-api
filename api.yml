@@ -84,7 +84,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/UserResponse"
 
-
 components:
   schemas:
     # -----------------------------------------------------------
@@ -243,15 +242,14 @@ components:
       type: object
       properties:
         user:
-          allOf:
+          oneOf:
             - $ref: "#/components/schemas/BaseUser"
             - type: object
               properties:
-                uid: 
-                  readOnly: true
-                nickname:
-                  readOnly: true
-                  
+                uid: false
+                nickname: false
+              additionalProperties: true
+
         userInfo:
           allOf:
             - $ref: "#/components/schemas/BaseUserInfo"
