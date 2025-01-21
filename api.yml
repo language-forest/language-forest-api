@@ -386,7 +386,7 @@ components:
       allOf:
         - type: object
           properties:
-            user:
+            study:
               $ref: "#/components/schemas/BaseStudy"
 
     # -----------------------------------------------------------
