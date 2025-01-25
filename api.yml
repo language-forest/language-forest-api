@@ -293,7 +293,7 @@ components:
                 voiceType: false
                 sentenceAmount: false
               additionalProperties: true
-        userStudyNotification:
+        userNotification:
           oneOf:
             - $ref: "#/components/schemas/BaseUserNotification"
             - type: object
