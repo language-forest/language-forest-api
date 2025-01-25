@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: Sample API
   version: 1.0.0
@@ -15,7 +15,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TokenDto"
+              $ref: "#/components/schemas/GoogleLoginRequest"
       responses:
         "200":
           description: JWT 토큰 발급 성공
@@ -50,133 +50,328 @@ paths:
               schema:
                 $ref: "#/components/schemas/TokenDto"
 
-  /user-info/me:
-    get:
-      tags:
-        - user
-      summary: "내 유저 정보를 가져옵니다."
-      operationId: "getUserInfoMe"
-      responses:
-        "200":
-          description: "유저 정보 조회 성공"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UserInfoDto"
-
-  /user-info:
+  /user:
     post:
       tags:
         - user
-      summary: "최초에 유저 언어 학습정보를 포함한 유저 정보를 생성합니다"
-      operationId: "createUserInfo"
-      description: "최초 유저 회원가입 때 사용하는 api입니다"
+      summary: "새로운 유저를 생성합니다."
+      operationId: "createUser"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: "#/components/schemas/BaseUser"
-                - type: object
-                  properties:
-                    id:
-                      readOnly: true
-                    studyLanguages:
-                      type: array
-                      items:
-                        allOf:
-                          - $ref: "#/components/schemas/BaseUserStudyLanguage"
-                          - type: object
-                            properties:
-                              id:
-                                type: string
-                                format: uuid
-                                nullable: true
-                                readOnly: true
-                            required:
-                              - uid
-                              - language
-                              - level
-                              - purpose
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        "201":
+          description: "유저 생성 성공"
+
+  /user/me:
+    get:
+      tags:
+        - user
+      summary: "jwt 기반으로 유저의 정보를 가져옵니다."
+      operationId: "getUserMe"
       responses:
         "200":
-          description: "업데이트 성공"
+          description: "유저 정보 반환 성공"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserInfoDto"
-
-  /user:
-    patch:
-      tags:
-        - user
-      summary: "유저에 대한 정보를 수정합니다."
-      operationId: "updateUser"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/BaseUser"
-      responses:
-        "201":
-          description: "업데이트 성공"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BaseUser"
-
-  /user/study-language/{userStudyLanguageId}:
-    patch:
-      tags:
-        - user
-      summary: "유저의 학습에 대한 정보를 변경합니다"
-      operationId: "updateUserStudyLanguage"
-      parameters:
-        - name: userStudyLanguageId
-          in: path
-          required: true
-          description: "수정할 유저 학습 언어 정보의 ID"
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UpdateUserStudyLanguageRequest"
-      responses:
-        "201":
-          description: "업데이트 성공"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BaseUserStudyLanguage"
+                $ref: "#/components/schemas/UserResponse"
 
 components:
   schemas:
-    # 공통 타임스탬프 스키마
+    # -----------------------------------------------------------
+    # 공통 Timestamp(읽기 전용) : createdAt, updatedAt, deletedAt
+    # -----------------------------------------------------------
     Timestamped:
       type: object
       properties:
         createdAt:
           type: string
           format: date-time
-          description: "생성 일시"
+          description: "생성 일시 (DB 자동)"
           readOnly: true
         updatedAt:
           type: string
           format: date-time
-          description: "수정 일시"
+          description: "수정 일시 (DB 자동)"
           readOnly: true
         deletedAt:
           type: string
           format: date-time
-          description: "삭제 일시"
+          description: "삭제 일시 (소프트 딜리트)"
           readOnly: true
 
+    # -----------------------------------------------------------
+    # Enum 정의
+    # -----------------------------------------------------------
+    LanguageEnum:
+      type: string
+      enum: [JA, ZH, FR, ES, DE, EN, KO]
+      description: "일본어, 중국어, 프랑스어, 스페인어, 독일어, 영어, 한국어"
+
+    GenderEnum:
+      type: string
+      enum: [MALE, FEMALE, OTHER]
+      description: "유저 성별 (MALE/FEMALE/OTHER)"
+
+    LevelEnum:
+      type: string
+      enum: [A, B, C, D, E]
+      description: "학습 수준 (A/B/C/D/E)"
+
+    NotificationEnum:
+      type: string
+      enum: [DAILY_STUDY]
+      description: "push 알림 타입입니다."
+
+    NotificationStatusEnum:
+      type: string
+      enum: [SUCCESS, FAIL, SCHEDULE, CANCEL]
+      description: "push 상태를 관리하는 enum입니다."
+
+    PointEnum:
+      type: string
+      enum: [DAILY_STUDY]
+      description: "유저가 포인트에 대한 조건을 구분하는 enum입니다."
+
+    VoiceTypeEnum:
+      type: string
+      enum: [A, B, C]
+      description: "ai 목소리에 맵핑되는 enum입니다."
+
+    # -----------------------------------------------------------
+    # BaseUser : UserEntity가 가진 주요 필드
+    # (nickname, language 등을 포함)
+    # -----------------------------------------------------------
+    BaseUser:
+      type: object
+      properties:
+        uid:
+          type: string
+          format: uuid
+        nickname:
+          type: string
+          description: "유저 닉네임 (필수)"
+        language:
+          $ref: "#/components/schemas/LanguageEnum"
+          description: "대표 언어 (필수)"
+      required: [uid, nickname, language]
+
+    # -----------------------------------------------------------
+    # BaseUserInfo : UserInfoEntity가 가진 필드들
+    # (모두 optional로 가정)
+    # -----------------------------------------------------------
+    BaseUserInfo:
+      type: object
+      properties:
+        uid:
+          type: string
+          format: uuid
+        gender:
+          $ref: "#/components/schemas/GenderEnum"
+          description: "옵션 - 성별"
+          nullable: true
+        yearOfBirth:
+          type: integer
+          format: int32
+          description: "옵션 - 태어난 해"
+          nullable: true
+        occupation:
+          type: string
+          description: "옵션 - 직업"
+          nullable: true
+        interest:
+          type: string
+          description: "옵션 - 관심사"
+          nullable: true
+        purpose:
+          type: string
+          description: "옵션 - 학습 목적"
+          nullable: true
+        languageSecond:
+          $ref: "#/components/schemas/LanguageEnum"
+          description: "옵션 - 2차 언어 (ex. JP)"
+          nullable: true
+        studyPlace:
+          type: string
+          description: "옵션 - 학습 장소 (ex. ONLINE, OFFLINE)"
+          nullable: true
+        mbti:
+          type: string
+          description: "옵션 - MBTI"
+          nullable: true
+      required: [uid]
+
+    # -----------------------------------------------------------
+    # BaseUserStudyInfo : UserStudyInfoEntity가 가진 필드들
+    # -----------------------------------------------------------
+    BaseUserStudyInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        uid:
+          type: string
+          format: uuid
+        level:
+          $ref: "#/components/schemas/LevelEnum"
+          description: "학습 난이도"
+        voiceType:
+          $ref: "#/components/schemas/VoiceTypeEnum"
+          description: "ai 목소리 타입"
+        sentenceAmount:
+          type: integer
+          format: int32
+          description: "학습할 문장 수"
+      required: [id, uid, level, voiceType, sentenceAmount]
+
+    # -----------------------------------------------------------
+    # BaseUserNotification : UserNotificationEntity가 가진 필드들
+    # -----------------------------------------------------------
+    BaseUserNotification:
+      type: object
+      properties:
+        uid:
+          type: string
+          format: uuid
+        notificationPreference:
+          $ref: "#/components/schemas/NotificationEnum"
+        cron:
+          type: string
+      required: [uid, notificationPreference, cron]
+
+    # -----------------------------------------------------------
+    # 유저 정보중 업데이트 가능한 것들을 모두 널러블로 열어둡니다.
+    # -----------------------------------------------------------
+    UpdateUser:
+      type: object
+      properties:
+        nickname:
+          type: string
+          description: "유저 닉네임 (필수)"
+        language:
+          $ref: "#/components/schemas/LanguageEnum"
+          description: "대표 언어 (필수)"
+
+    # -----------------------------------------------------------
+    # 유저 정보중 업데이트 가능한 것들을 모두 널러블로 열어둡니다.
+    # -----------------------------------------------------------
+    UpdateUserInfo:
+      type: object
+      properties:
+        gender:
+          $ref: "#/components/schemas/GenderEnum"
+          description: "옵션 - 성별"
+        yearOfBirth:
+          type: integer
+          format: int32
+          description: "옵션 - 태어난 해"
+        occupation:
+          type: string
+          description: "옵션 - 직업"
+        interest:
+          type: string
+          description: "옵션 - 관심사"
+        purpose:
+          type: string
+          description: "옵션 - 학습 목적"
+        languageSecond:
+          $ref: "#/components/schemas/LanguageEnum"
+          description: "옵션 - 2차 언어 (ex. JP)"
+        studyPlace:
+          type: string
+          description: "옵션 - 학습 장소 (ex. ONLINE, OFFLINE)"
+        mbti:
+          type: string
+          description: "옵션 - MBTI"
+
+    # -----------------------------------------------------------
+    # 유저 학습정보 중 업데이트 가능한 것들을 열어둡니다.
+    # -----------------------------------------------------------
+    UpdateUserStudyInfo:
+      type: object
+      properties:
+        level:
+          $ref: "#/components/schemas/LevelEnum"
+          description: "학습 난이도"
+        voiceType:
+          $ref: "#/components/schemas/VoiceTypeEnum"
+          description: "ai 목소리 타입"
+        sentenceAmount:
+          type: integer
+          format: int32
+          description: "학습할 문장 수"
+
+    # -----------------------------------------------------------
+    # 유저 노티피케이션을 생성합니다.
+    # -----------------------------------------------------------
+    CreateUserNotification:
+      type: object
+      properties:
+        notificationPreference:
+          $ref: "#/components/schemas/NotificationEnum"
+        cron:
+          type: string
+      required: [notificationPreference, cron]
+
+    # -----------------------------------------------------------
+    # CreateUserRequest : User 생성 요청
+    #  => BaseUser + BaseUserInfo 를 상속(allOf)해서 합치기
+    # -----------------------------------------------------------
+    CreateUserRequest:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/UpdateUser"
+        userInfo:
+          $ref: "#/components/schemas/UpdateUserInfo"
+        userStudyInfo:
+          $ref: "#/components/schemas/UpdateUserStudyInfo"
+        userNotification:
+          $ref: "#/components/schemas/CreateUserNotification"
+      required: [user, userInfo, userStudyInfo, userNotification]
+
+    # -----------------------------------------------------------
+    # UserResponse : User 조회 응답
+    #  => Timestamped + BaseUser + BaseUserInfo
+    #  => uid 같은 PK를 추가할 수도 있음
+    # -----------------------------------------------------------
+    UserResponse:
+      allOf:
+        - type: object
+          properties:
+            user:
+              $ref: "#/components/schemas/BaseUser"
+        - type: object
+          properties:
+            userInfo:
+              $ref: "#/components/schemas/BaseUserInfo"
+        - type: object
+          properties:
+            userStudyInfo:
+              $ref: "#/components/schemas/BaseUserStudyInfo"
+
+    # -----------------------------------------------------------
+    # GoogleLoginRequest :
+    #  => googleId, email, name(옵션) + (BaseUser) nickname/language 필수
+    # -----------------------------------------------------------
+    GoogleLoginRequest:
+      type: object
+      properties:
+        language:
+          type: string
+          description: "디바이스의 언어를 가져옵니다."
+        token:
+          $ref: "#/components/schemas/TokenDto"
+      required: [language, token]
+
+    # -----------------------------------------------------------
+    # JWT 토큰 DTO
+    # -----------------------------------------------------------
     TokenDto:
       type: object
       properties:
@@ -185,91 +380,3 @@ components:
         refreshToken:
           type: string
       required: [accessToken]
-
-    BaseUserStudyLanguage:
-      allOf:
-        - $ref: "#/components/schemas/Timestamped"
-        - type: object
-          properties:
-            id:
-              type: string
-              format: uuid
-              readOnly: true
-            uid:
-              type: string
-              format: uuid
-              readOnly: true
-            language:
-              $ref: "#/components/schemas/LanguageEnum"
-            level:
-              $ref: "#/components/schemas/LevelEnum"
-            purpose:
-              type: string
-              description: "학습 목적"
-          required: [id, uid, language, level, purpose]
-
-    UpdateUserStudyLanguageRequest:
-      allOf:
-        - $ref: "#/components/schemas/BaseUserStudyLanguage"
-        - type: object
-          properties:
-            language:
-              $ref: "#/components/schemas/LanguageEnum"
-              nullable: true
-            level:
-              $ref: "#/components/schemas/LevelEnum"
-              nullable: true
-            purpose:
-              type: string
-              nullable: true
-          required: [uid, language, level, purpose]
-
-    BaseUser:
-      allOf:
-        - $ref: "#/components/schemas/Timestamped"
-        - type: object
-          properties:
-            id:
-              type: string
-              format: uuid
-              description: "유저 ID"
-            email:
-              type: string
-              description: "유저 이메일"
-            username:
-              type: string
-              description: "유저 이름"
-            birthday:
-              type: string
-              format: date
-              description: "유저 생년월일 (yyyy-MM-dd)"
-            gender:
-              $ref: "#/components/schemas/GenderEnum"
-            language:
-              $ref: "#/components/schemas/LanguageEnum"
-          required: [id]
-
-    UserInfoDto:
-      allOf:
-        - $ref: "#/components/schemas/BaseUser"
-        - type: object
-          properties:
-            studyLanguages:
-              type: array
-              items:
-                $ref: "#/components/schemas/BaseUserStudyLanguage"
-
-    LanguageEnum:
-      type: string
-      enum: [EN, KO]
-      description: "학습 언어"
-
-    LevelEnum:
-      type: string
-      enum: [EASY, NORMAL, HARD]
-      description: "학습 레벨"
-
-    GenderEnum:
-      type: string
-      enum: [MALE, FEMALE, OTHER]
-      description: "유저 성별"
