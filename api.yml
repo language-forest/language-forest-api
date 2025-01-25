@@ -299,7 +299,7 @@ components:
             - type: object
               properties:
                 uid: false
-                notificationPreference:: false
+                notificationPreference: false
               additionalProperties: true
       required: [user, userInfo, userStudyInfo, userNotification]
 
