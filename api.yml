@@ -246,6 +246,7 @@ components:
         amount:
           type: integer
           format: int32
+      required: [uid, amount]
 
     # -----------------------------------------------------------
     # BaseUserNotification : UserNotificationEntity가 가진 필드들
@@ -260,6 +261,7 @@ components:
           $ref: "#/components/schemas/NotificationEnum"
         cron:
           type: string
+      required: [uid, notificationPreference, cron]
 
     # -----------------------------------------------------------
     # CreateUserRequest : User 생성 요청
