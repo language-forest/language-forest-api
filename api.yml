@@ -301,7 +301,7 @@ components:
                 uid: false
                 notificationPreference:: false
               additionalProperties: true
-      required: [user, userInfo, userStudyInfo, userStudyNotification]
+      required: [user, userInfo, userStudyInfo, userNotification]
 
     # -----------------------------------------------------------
     # UserResponse : User 조회 응답
