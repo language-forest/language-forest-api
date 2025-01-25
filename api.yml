@@ -302,6 +302,26 @@ components:
       required: [user, userInfo, userStudyInfo, userNotification]
 
     # -----------------------------------------------------------
+    # UserResponse : User 조회 응답
+    #  => Timestamped + BaseUser + BaseUserInfo
+    #  => uid 같은 PK를 추가할 수도 있음
+    # -----------------------------------------------------------
+    UserResponse:
+      allOf:
+        - type: object
+          properties:
+            user:
+              $ref: "#/components/schemas/BaseUser"
+        - type: object
+          properties:
+            userInfo:
+              $ref: "#/components/schemas/BaseUserInfo"
+        - type: object
+          properties:
+            userStudyInfo:
+              $ref: "#/components/schemas/BaseUserStudyInfo"
+
+    # -----------------------------------------------------------
     # GoogleLoginRequest :
     #  => googleId, email, name(옵션) + (BaseUser) nickname/language 필수
     # -----------------------------------------------------------
