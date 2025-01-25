@@ -65,10 +65,6 @@ paths:
       responses:
         "201":
           description: "유저 생성 성공"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UserResponse"
 
   /user/me:
     get:
@@ -304,26 +300,6 @@ components:
                 notificationPreference: false
               additionalProperties: true
       required: [user, userInfo, userStudyInfo, userNotification]
-
-    # -----------------------------------------------------------
-    # UserResponse : User 조회 응답
-    #  => Timestamped + BaseUser + BaseUserInfo
-    #  => uid 같은 PK를 추가할 수도 있음
-    # -----------------------------------------------------------
-    UserResponse:
-      allOf:
-        - type: object
-          properties:
-            user:
-              $ref: "#/components/schemas/BaseUser"
-        - type: object
-          properties:
-            userInfo:
-              $ref: "#/components/schemas/BaseUserInfo"
-        - type: object
-          properties:
-            userStudyInfo:
-              $ref: "#/components/schemas/BaseUserStudyInfo"
 
     # -----------------------------------------------------------
     # GoogleLoginRequest :
