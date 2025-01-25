@@ -329,7 +329,7 @@ components:
       type: object
       properties:
         language:
-          $ref: "#/components/schemas/LanguageEnum"
+          type: string
           description: "디바이스의 언어를 가져옵니다."
         token:
           $ref: "#/components/schemas/TokenDto"
