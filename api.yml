@@ -104,6 +104,25 @@ paths:
               schema:
                 $ref: "#/components/schemas/UserResponse"
 
+  /study:
+    post:
+      tags:
+        - study
+      summary: "새로운 스터디를 생성합니다."
+      operationId: "createStudy"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateStudyRequest"
+      responses:
+        "201":
+          description: "스터디 생성 성공"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudyResponse"
 components:
   schemas:
     # -----------------------------------------------------------
@@ -165,6 +184,11 @@ components:
       type: string
       enum: [A, B, C]
       description: "ai 목소리에 맵핑되는 enum입니다."
+
+    InputTypeEnum:
+      type: string
+      enum: [ SPEAKING, WRITING ]
+      description: "유저가 study를 위해 문장을 넣는 방식을 구분하는 enum입니다."
 
     # -----------------------------------------------------------
     # BaseUser : UserEntity가 가진 주요 필드
@@ -269,6 +293,40 @@ components:
       required: [uid, notificationPreference, cron]
 
     # -----------------------------------------------------------
+    # BaseStudy : StudyEntity가 가진 필드들
+    # -----------------------------------------------------------
+    BaseStudy:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        uid:
+          type: string
+          format: uuid
+        startQuestion:
+          type: string
+          description: "시작 질문"
+          nullable: true
+        startQuestionVoicePath:
+          type: string
+          description: "시작 질문 음성 파일 경로"
+          nullable: true
+        level:
+          $ref: "#/components/schemas/LevelEnum"
+          description: "학습 난이도"
+        voiceType:
+          $ref: "#/components/schemas/VoiceTypeEnum"
+          description: "ai 목소리 타입"
+        sentenceAmount:
+          type: integer
+          format: int32
+          description: "학습할 문장 수"
+        inputType:
+          $ref: "#/components/schemas/InputTypeEnum"
+          description: "문장 입력 타입"
+
+    # -----------------------------------------------------------
     # 유저 정보중 업데이트 가능한 것들을 모두 널러블로 열어둡니다.
     # -----------------------------------------------------------
     UpdateUser:
@@ -359,6 +417,29 @@ components:
           $ref: "#/components/schemas/CreateUserNotification"
       required: [user, userInfo, userStudyInfo, userNotification]
 
+    CreateStudyRequest:
+      type: object
+      properties:
+        study:
+          allOf:
+            - $ref: "#/components/schemas/BaseStudy"
+            - type: object
+              properties:
+                uid:
+                  readOnly: true
+                id:
+                  readOnly: true
+                startQuestion:
+                  readOnly: true
+                startQuestionVoicePath:
+                  readOnly: true
+              required:
+                - voiceType
+                - level
+                - sentenceAmount
+                - input_type
+      required: [ study ]
+
     # -----------------------------------------------------------
     # UserResponse : User 조회 응답
     #  => Timestamped + BaseUser + BaseUserInfo
@@ -404,3 +485,11 @@ components:
         refreshToken:
           type: string
       required: [accessToken]
+
+
+    StudyResponse:
+      allOf:
+        - type: object
+          properties:
+            study:
+              $ref: "#/components/schemas/BaseStudy"
