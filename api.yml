@@ -50,6 +50,16 @@ paths:
               schema:
                 $ref: "#/components/schemas/TokenDto"
 
+  /user/dummy:
+    post:
+      tags:
+        - user
+      summary: "더미 유저를 생성합니다."
+      operationId: "createDummy"
+      responses:
+        "201":
+          description: "더미 유저 생성 성공"
+
   /user:
     post:
       tags:
