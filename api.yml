@@ -437,7 +437,7 @@ components:
                 - voiceType
                 - level
                 - sentenceAmount
-                - input_type
+                - inputType
       required: [ study ]
 
     # -----------------------------------------------------------
