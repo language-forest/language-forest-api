@@ -375,7 +375,7 @@ components:
         - type: object
           properties:
             userPoint:
-              $ref: "#/components/schemas/BasePoint"
+              $ref: "#/components/schemas/BaseUserPoint"
 
     # -----------------------------------------------------------
     # GoogleLoginRequest :
