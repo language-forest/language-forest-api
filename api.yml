@@ -323,7 +323,7 @@ components:
         language:
           $ref: "#/components/schemas/LanguageEnum"
           description: "학습할 언어"
-      requird: [level, language]
+      required: [level, language]
 
     # -----------------------------------------------------------
     # 유저 노티피케이션을 생성합니다.
