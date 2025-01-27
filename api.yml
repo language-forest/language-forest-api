@@ -184,7 +184,9 @@ components:
           description: "옵션 - 직업"
           nullable: true
         interest:
-          type: string
+          type: array
+          items:
+            type: string
           description: "옵션 - 관심사"
           nullable: true
         purpose:
@@ -223,11 +225,33 @@ components:
         voiceType:
           $ref: "#/components/schemas/VoiceTypeEnum"
           description: "ai 목소리 타입"
+        language:
+          $ref: "#/components/schemas/LanguageEnum"
+          description: "지금 내가 학습하는 언어"
+        streakDays:
+          type: integer
+          format: int32
+          description: "연속 학습 일 수"
         sentenceAmount:
           type: integer
           format: int32
           description: "학습할 문장 수"
-      required: [id, uid, level, voiceType, sentenceAmount]
+      required:
+        [id, uid, level, voiceType, language, streakDays, sentenceAmount]
+
+    # -----------------------------------------------------------
+    # BaseUserPoint : UserStudyPointEntity가 가진 필드들
+    # -----------------------------------------------------------
+    BaseUserPoint:
+      type: object
+      properties:
+        uid:
+          type: string
+          format: uuid
+        amount:
+          type: integer
+          description: "유저 포인트"
+      required: [uid, amount]
 
     # -----------------------------------------------------------
     # BaseUserNotification : UserNotificationEntity가 가진 필드들
@@ -274,7 +298,9 @@ components:
           type: string
           description: "옵션 - 직업"
         interest:
-          type: string
+          type: array
+          items:
+            type: string
           description: "옵션 - 관심사"
         purpose:
           type: string
@@ -292,19 +318,16 @@ components:
     # -----------------------------------------------------------
     # 유저 학습정보 중 업데이트 가능한 것들을 열어둡니다.
     # -----------------------------------------------------------
-    UpdateUserStudyInfo:
+    CreateUserStudyInfo:
       type: object
       properties:
         level:
           $ref: "#/components/schemas/LevelEnum"
           description: "학습 난이도"
-        voiceType:
-          $ref: "#/components/schemas/VoiceTypeEnum"
-          description: "ai 목소리 타입"
-        sentenceAmount:
-          type: integer
-          format: int32
-          description: "학습할 문장 수"
+        language:
+          $ref: "#/components/schemas/LanguageEnum"
+          description: "학습할 언어"
+      required: [level, language]
 
     # -----------------------------------------------------------
     # 유저 노티피케이션을 생성합니다.
@@ -330,7 +353,7 @@ components:
         userInfo:
           $ref: "#/components/schemas/UpdateUserInfo"
         userStudyInfo:
-          $ref: "#/components/schemas/UpdateUserStudyInfo"
+          $ref: "#/components/schemas/CreateUserStudyInfo"
         userNotification:
           $ref: "#/components/schemas/CreateUserNotification"
       required: [user, userInfo, userStudyInfo, userNotification]
@@ -354,6 +377,10 @@ components:
           properties:
             userStudyInfo:
               $ref: "#/components/schemas/BaseUserStudyInfo"
+        - type: object
+          properties:
+            userPoint:
+              $ref: "#/components/schemas/BaseUserPoint"
 
     # -----------------------------------------------------------
     # GoogleLoginRequest :
