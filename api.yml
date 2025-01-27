@@ -184,7 +184,9 @@ components:
           description: "옵션 - 직업"
           nullable: true
         interest:
-          type: string
+          type: array
+          items:
+            type: string
           description: "옵션 - 관심사"
           nullable: true
         purpose:
