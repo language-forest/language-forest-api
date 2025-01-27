@@ -298,7 +298,9 @@ components:
           type: string
           description: "옵션 - 직업"
         interest:
-          type: string
+          type: array
+          items:
+            type: string
           description: "옵션 - 관심사"
         purpose:
           type: string
