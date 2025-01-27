@@ -321,7 +321,7 @@ components:
           $ref: "#/components/schemas/LevelEnum"
           description: "학습 난이도"
         language:
-          $ref: "#/components/schemas/LevelEnum"
+          $ref: "#/components/schemas/LanguageEnum"
           description: "학습할 언어"
 
     # -----------------------------------------------------------
