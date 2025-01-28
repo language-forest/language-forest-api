@@ -455,7 +455,7 @@ components:
       required: [user, userInfo, userStudyInfo, userNotification]
 
     # -----------------------------------------------------------
-    # 스터디를 생섭합니다.
+    # 스터디를 생성합니다.
     # -----------------------------------------------------------
     CreateStudy:
       type: object
@@ -466,19 +466,17 @@ components:
         startQuestion:
           type: string
           description: "시작 질문"
-          nullable: true
         inputType:
           $ref: "#/components/schemas/InputTypeEnum"
           description: "문장 입력 타입"
         story:
           type: string
           description: "유저의 하루 일기"
-          nullable: true
         storyVoicePath:
           type: string
           description: "유저의 하루 일기 음성 파일 경로"
           nullable: true
-      required: [ userStudyInfoId, startQuestion, inputType, story, storyVoicePath ]
+      required: [ userStudyInfoId, startQuestion, inputType, story ]
 
     # -----------------------------------------------------------
     # CreateStudyRequest : Study 생성 요청
