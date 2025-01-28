@@ -80,6 +80,21 @@ paths:
               schema:
                 $ref: "#/components/schemas/UserResponse"
 
+    put:
+      tags:
+        - user
+      summary: 유저의 정보를 변경합니다. 아직은 큰 차이 없으니 온보딩에서 사용한 schema를 재사용합니다.
+      operationId: updateUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        "201":
+          description: "유저 update 성공"
+
 components:
   schemas:
     # -----------------------------------------------------------
