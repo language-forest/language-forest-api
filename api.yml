@@ -519,8 +519,11 @@ components:
     # -----------------------------------------------------------
     StudyResponse:
       properties:
-        user:
-          $ref: "#/components/schemas/BaseStudy"
+        study:
+          properties:
+            studyId:
+              type: string
+              format: uuid
 
     # -----------------------------------------------------------
     # GoogleLoginRequest :
