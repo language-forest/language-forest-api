@@ -348,11 +348,6 @@ components:
         startQuestion:
           type: string
           description: "시작 질문"
-          nullable: true
-        startQuestionVoicePath:
-          type: string
-          description: "시작 질문 음성 파일 경로"
-          nullable: true
         inputType:
           $ref: "#/components/schemas/InputTypeEnum"
           description: "문장 입력 타입"
@@ -472,10 +467,6 @@ components:
           type: string
           description: "시작 질문"
           nullable: true
-        startQuestionVoicePath:
-          type: string
-          description: "시작 질문 음성 파일 경로"
-          nullable: true
         inputType:
           $ref: "#/components/schemas/InputTypeEnum"
           description: "문장 입력 타입"
@@ -487,7 +478,7 @@ components:
           type: string
           description: "유저의 하루 일기 음성 파일 경로"
           nullable: true
-      required: [ userStudyInfoId, inputType, story, storyVoicePath ]
+      required: [ userStudyInfoId, startQuestion, inputType, story, storyVoicePath ]
 
     # -----------------------------------------------------------
     # CreateStudyRequest : Study 생성 요청
