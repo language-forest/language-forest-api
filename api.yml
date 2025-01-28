@@ -122,7 +122,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/StudyResponse"
+                $ref: "#/components/schemas/CreateStudyResponse"
 
 components:
   schemas:
