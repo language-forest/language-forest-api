@@ -90,7 +90,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateUserRequest"
+              $ref: "#/components/schemas/UpdateUserRequest"
       responses:
         "201":
           description: "유저 update 성공"
@@ -372,6 +372,16 @@ components:
         userNotification:
           $ref: "#/components/schemas/CreateUserNotification"
       required: [user, userInfo, userStudyInfo, userNotification]
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/UpdateUser"
+        userInfo:
+          $ref: "#/components/schemas/UpdateUserInfo"
+        userStudyInfo:
+          $ref: "#/components/schemas/CreateUserStudyInfo"
 
     # -----------------------------------------------------------
     # UserResponse : User 조회 응답
