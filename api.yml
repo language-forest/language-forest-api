@@ -173,6 +173,8 @@ components:
         language:
           $ref: "#/components/schemas/LanguageEnum"
           description: "대표 언어 (필수)"
+        profileImage:
+          type: string
       required: [uid, nickname, language]
 
     # -----------------------------------------------------------
