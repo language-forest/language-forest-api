@@ -519,11 +519,9 @@ components:
     # -----------------------------------------------------------
     StudyResponse:
       properties:
-        study:
-          properties:
-            studyId:
-              type: string
-              format: uuid
+        studyId:
+          type: string
+          format: uuid
 
     # -----------------------------------------------------------
     # GoogleLoginRequest :
