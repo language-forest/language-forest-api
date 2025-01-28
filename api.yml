@@ -513,11 +513,9 @@ components:
               $ref: "#/components/schemas/BaseUserPoint"
 
     # -----------------------------------------------------------
-    # StudyResponse : Study 조회 응답
-    #  => Timestamped + BaseUser + BaseUserInfo
-    #  => uid 같은 PK를 추가할 수도 있음
+    # CreateStudyResponse : Study 생성 응답
     # -----------------------------------------------------------
-    StudyResponse:
+    CreateStudyResponse:
       properties:
         studyId:
           type: string
