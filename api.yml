@@ -136,6 +136,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
       operationId: createStudySummary
       responses:
         "201":
