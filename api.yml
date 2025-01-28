@@ -344,6 +344,20 @@ components:
           description: "학습할 언어"
       required: [level, language]
 
+    UpdateUserStudyInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        level:
+          $ref: "#/components/schemas/LevelEnum"
+          description: "학습 난이도"
+        language:
+          $ref: "#/components/schemas/LanguageEnum"
+          description: "학습할 언어"
+      required: [id]
+
     # -----------------------------------------------------------
     # 유저 노티피케이션을 생성합니다.
     # -----------------------------------------------------------
@@ -381,7 +395,7 @@ components:
         userInfo:
           $ref: "#/components/schemas/UpdateUserInfo"
         userStudyInfo:
-          $ref: "#/components/schemas/CreateUserStudyInfo"
+          $ref: "#/components/schemas/UpdateUserStudyInfo"
 
     # -----------------------------------------------------------
     # UserResponse : User 조회 응답
