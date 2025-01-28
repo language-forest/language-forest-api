@@ -124,6 +124,21 @@ paths:
               schema:
                 $ref: "#/components/schemas/CreateStudyResponse"
 
+  /study/{studyId}/summary:
+    post:
+      tags:
+        - study
+      summary: "유저 일기를 요약하고 키워드, 이모티콘 등을 만들어 제공합니다."
+      operationId: createStudySummary
+      responses:
+        "201":
+          description: "유저 일기 요약, 메시지, 키워드 이모티콘 생성 성공"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateStudySummaryResponse"
+
+
 components:
   schemas:
     # -----------------------------------------------------------
@@ -520,6 +535,24 @@ components:
         studyId:
           type: string
           format: uuid
+
+    # -----------------------------------------------------------
+    # CreateStudySummaryResponse : StudySummary 생성 응답
+    # -----------------------------------------------------------
+    CreateStudySummaryResponse:
+      properties:
+        summary:
+          type: string
+          description: "하루 일지 한 문장 요약"
+        message:
+          type: string
+          description: "하루 일지 150자 이내 요약"
+        emoji:
+          type: string
+          description: "하루 일지 기반 이모티콘"
+        tags:
+          type: string
+          description: "하루 일지 기반 4가지 키워드"
 
     # -----------------------------------------------------------
     # GoogleLoginRequest :
