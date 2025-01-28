@@ -129,6 +129,13 @@ paths:
       tags:
         - study
       summary: "유저 일기를 요약하고 키워드, 이모티콘 등을 만들어 제공합니다."
+      parameters:
+        - name: studyId
+          in: path
+          description: "The ID of the study"
+          required: true
+          schema:
+            type: string
       operationId: createStudySummary
       responses:
         "201":
