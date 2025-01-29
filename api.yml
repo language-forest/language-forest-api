@@ -176,10 +176,9 @@ paths:
             schema:
               type: object
               properties:
-                is_active:
+                isActive:
                   type: boolean
-                  description: "알림 활성화 여부 (true: 활성화, false: 비활성화)"
-                  example: true
+              required: [isActive]
       responses:
         "202":
           description: 변경에 성공합니다.
