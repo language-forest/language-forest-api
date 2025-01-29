@@ -150,7 +150,7 @@ paths:
     post:
       tags:
         - study
-      summary: "유저가 선택한 태그를 저장하고 유저가 선택했던 레벨과 개수에 맞는 문제와 정답을 생성해 제공합니다."
+      summary: "유저가 선택한 태그를 저장하고 유저가 선택했던 레벨과 개수, 언어에 맞는 문제를 생성해 제공합니다."
       parameters:
         - name: studyId
           in: path
@@ -178,11 +178,46 @@ paths:
                 - selectedTag
       responses:
         "201":
-          description: "태그 저장 및 문제, 정답 생성 성공"
+          description: "태그 저장 및 문제 생성 성공"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateStudyPracticeResponse"
+
+  /study/{studyId}/practice/{studyPracticeId}:
+    put:
+      tags:
+        - study
+      summary: "문제에 맞는 유저의 답변을 받아 정답, 점수, 팁(피드백) 제공"
+      parameters:
+        - name: studyId
+          in: path
+          description: "The ID of the study"
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: studyPracticeId
+          in: path
+          description: "The ID of the study practice"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      operationId: updateStudyPractice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateStudyPracticeRequest"
+      responses:
+        "201":
+          description: "정답, 점수, 팁(피드백) 생성 성공"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateStudyPracticeResponse"
 
 components:
   schemas:
@@ -549,6 +584,31 @@ components:
       required: [ study ]
 
     # -----------------------------------------------------------
+    # StudyPractice를 생성합니다.
+    # -----------------------------------------------------------
+    UpdateStudyPractice:
+      type: object
+      properties:
+        myAnswer:
+          type: string
+          description: "유저의 답변"
+        myAnswerVoicePath:
+          type: string
+          description: "유저의 답변 음성 파일 경로"
+          nullable: true
+      required: [ myAnswer ]
+
+    # -----------------------------------------------------------
+    # UpdateStudyPracticeRequest : StudyPractice 수정 요청
+    # -----------------------------------------------------------
+    UpdateStudyPracticeRequest:
+      type: object
+      properties:
+        studyPractice:
+          $ref: "#/components/schemas/UpdateStudyPractice"
+      required: [ studyPractice ]
+
+    # -----------------------------------------------------------
     # UserResponse : User 조회 응답
     #  => Timestamped + BaseUser + BaseUserInfo
     #  => uid 같은 PK를 추가할 수도 있음
@@ -617,8 +677,40 @@ components:
                 format: uuid
               problemNumber:
                 type: integer
+                description: "문제 번호"
               problem:
                 type: string
+                description: "문제"
+
+    # -----------------------------------------------------------
+    # UpdateStudyPracticeResponse : StudyPractice 수정 응답
+    # -----------------------------------------------------------
+    UpdateStudyPracticeResponse:
+      properties:
+        studyPractice:
+          type: object
+          properties:
+            problemNumber:
+              type: integer
+              description: "문제 번호"
+            problem:
+              type: string
+              description: "문제"
+            myAnswer:
+              type: string
+              description: "유저 답변"
+            myAnswerVoicePath:
+              type: string
+              description: "유저 답변 링크"
+            correctAnswer:
+              type: string
+              description: "정답"
+            score:
+              type: integer
+              description: "점수"
+            tip:
+              type: string
+              description: "팁(피드백)"
 
     # -----------------------------------------------------------
     # GoogleLoginRequest :
