@@ -128,7 +128,7 @@ paths:
     post:
       tags:
         - study
-      summary: "유저 일기를 요약하고 키워드, 이모티콘 등을 만들어 제공합니다."
+      summary: "유저 일기를 요약하고 태그, 이모티콘 등을 만들어 제공합니다."
       parameters:
         - name: studyId
           in: path
@@ -140,12 +140,45 @@ paths:
       operationId: createStudySummary
       responses:
         "201":
-          description: "유저 일기 요약, 메시지, 키워드 이모티콘 생성 성공"
+          description: "유저 일기 요약, 메시지, 태그, 이모티콘 생성 성공"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateStudySummaryResponse"
 
+  /study/{studyId}/practice:
+    post:
+      tags:
+        - study
+      summary: "유저가 선택한 태그를 저장하고 유저가 선택했던 레벨과 개수에 맞는 문제와 정답을 생성해 제공합니다."
+      parameters:
+        - name: studyId
+          in: path
+          description: "The ID of the study"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      operationId: createStudyPractice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                selectedTag:
+                  type: string
+                  description: "제시된 태그들 중 유저가 선택한 태그"
+              required:
+                - selectedTag
+      responses:
+        "201":
+          description: "태그 저장 및 문제, 정답 생성 성공"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateStudyPracticeResponse"
 
 components:
   schemas:
@@ -561,6 +594,24 @@ components:
         tags:
           type: string
           description: "하루 일지 기반 4가지 키워드"
+
+    # -----------------------------------------------------------
+    # CreateStudyPracticeResponse : StudyPractice 생성 응답
+    # -----------------------------------------------------------
+    CreateStudyPracticeResponse:
+      properties:
+        studyPractices:
+          type: array
+          items:
+            type: object
+            properties:
+              studyPracticeId:
+                type: string
+                format: uuid
+              problemNumber:
+                type: integer
+              problem:
+                type: string
 
     # -----------------------------------------------------------
     # GoogleLoginRequest :
