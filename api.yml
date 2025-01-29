@@ -493,7 +493,7 @@ components:
           description: fullName 중 nickname을 의미합니다.
         nonce:
           type: string
-        realUserState:
+        realUserStatus:
           type: integer
         state:
           type: string
