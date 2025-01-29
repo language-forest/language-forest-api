@@ -149,6 +149,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BaseUserNotification"
+        "404":
+          description: 해당 notification 설정을 찾을 수 없음
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
 components:
   schemas:
@@ -559,3 +565,13 @@ components:
         refreshToken:
           type: string
       required: [accessToken]
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          description: HTTP 상태 코드
+        message:
+          type: string
+          description: 에러 메시지
