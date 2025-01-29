@@ -167,10 +167,14 @@ paths:
             schema:
               type: object
               properties:
+                studySummaryId:
+                  type: string
+                  format: uuid
                 selectedTag:
                   type: string
                   description: "제시된 태그들 중 유저가 선택한 태그"
               required:
+                - studySummaryId
                 - selectedTag
       responses:
         "201":
@@ -582,6 +586,9 @@ components:
     # -----------------------------------------------------------
     CreateStudySummaryResponse:
       properties:
+        studySummaryId:
+          type: string
+          format: uuid
         summary:
           type: string
           description: "하루 일지 한 문장 요약"
