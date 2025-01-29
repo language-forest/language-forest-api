@@ -189,6 +189,16 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
+  /user/me/delete:
+    post:
+      tags:
+        - user
+      summary: 회원탈퇴를 진행합니다.
+      operationId: userMeDelete
+      responses:
+        "201":
+          description: 회원 탈퇴에 성공합니다.
+
 components:
   schemas:
     # -----------------------------------------------------------
