@@ -286,6 +286,11 @@ components:
       enum: [ SPEAKING, WRITING ]
       description: "유저가 study를 위해 문장을 넣는 방식을 구분하는 enum입니다."
 
+    StudyStatusEnum:
+      type: string
+      enum: [PENDING, COMPLETED]
+      description: "학습의 완료 여부를 구분하는 enum입니다."
+
     # -----------------------------------------------------------
     # BaseUser : UserEntity가 가진 주요 필드
     # (nickname, language 등을 포함)
