@@ -580,7 +580,7 @@ components:
           type: string
           format: uuid
         problemNumber:
-          type: string
+          type: integer
           description: "문제 번호"
         problem:
           type: string
