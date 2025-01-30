@@ -156,12 +156,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
-  /user/me/notification/{notification}/active:
     patch:
       tags:
         - user
       summary: 유저의 특정 알림(notification) 활성화 여부를 변경합니다. 이때 프론트에서 넘겨주는 값으로 변경합니다.
-      operationId: updateUserNotificationActive
+      operationId: updateUserNotification
       parameters:
         - name: notification
           in: path
@@ -178,7 +177,8 @@ paths:
               properties:
                 isActive:
                   type: boolean
-              required: [isActive]
+                cron:
+                  type: string
       responses:
         "202":
           description: 변경에 성공합니다.
