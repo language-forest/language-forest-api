@@ -124,6 +124,28 @@ paths:
               schema:
                 $ref: "#/components/schemas/CreateStudyResponse"
 
+  /study/{studyId}:
+    get:
+      tags:
+        - study
+      summary: "학습 결과 정보를 가져옵니다."
+      parameters:
+        - name: studyId
+          in: path
+          description: "The ID of the study"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      operationId: getStudy
+      responses:
+        "200":
+          description: "학습 결과 정보 반환 성공"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudyResponse"
+
   /study/{studyId}/summary:
     post:
       tags:
@@ -505,15 +527,80 @@ components:
         story:
           type: string
           description: "유저의 하루 일기"
-          nullable: true
         storyVoicePath:
           type: string
           description: "유저의 하루 일기 음성 파일 경로"
           nullable: true
         averageScore:
-          type: integer
-          format: int32
+          type: number
+          format: double
           description: "전체 점수 평균"
+        studyStatus:
+          $ref: "#/components/schemas/StudyStatusEnum"
+          description: "학습 상태"
+
+    # -----------------------------------------------------------
+    # BaseStudySummary : StudySummaryEntity가 가진 필드들
+    # -----------------------------------------------------------
+    BaseStudySummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        studyId:
+          type: string
+          format: uuid
+        summary:
+          type: string
+          description: "하루 일지 한 문장 요약"
+        message:
+          type: string
+          description: "하루 일지 150자 이내 요약"
+        emoji:
+          type: string
+          description: "하루 일지 기반 이모티콘"
+        tags:
+          type: string
+          description: "하루 일지 기반 4가지 키워드"
+        selectedTag:
+          type: string
+          description: "유저가 선택한 키워드"
+
+    # -----------------------------------------------------------
+    # BaseStudyPractice : StudyPracticeEntity가 가진 필드들
+    # -----------------------------------------------------------
+    BaseStudyPractice:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        studyId:
+          type: string
+          format: uuid
+        problemNumber:
+          type: string
+          description: "문제 번호"
+        problem:
+          type: string
+          description: "문제"
+        correctAnswer:
+          type: string
+          description: "정답"
+        myAnswer:
+          type: string
+          description: "유저의 답변"
+        myAnswerVoicePath:
+          type: string
+          description: "유저의 답변 음성 파일 경로"
+          nullable: true
+        tip:
+          type: string
+          description: "팁(피드백)"
+        score:
+          type: integer
+          description: "점수"
 
     # -----------------------------------------------------------
     # 유저 정보중 업데이트 가능한 것들을 모두 널러블로 열어둡니다.
@@ -687,6 +774,28 @@ components:
           properties:
             userPoint:
               $ref: "#/components/schemas/BaseUserPoint"
+
+    # -----------------------------------------------------------
+    # StudyResponse : Study 조회 응답
+    #  => BaseStudy + BaseStudySummary + Array<BaseStudyPractice>
+    # -----------------------------------------------------------
+    StudyResponse:
+      allOf:
+        - type: object
+          properties:
+            study:
+              $ref: "#/components/schemas/BaseStudy"
+        - type: object
+          properties:
+            studySummary:
+              $ref: "#/components/schemas/BaseStudySummary"
+        - type: object
+          properties:
+            studyPractices:
+              type: array
+              items:
+                type: object
+                $ref: "#/components/schemas/BaseStudyPractice"
 
     # -----------------------------------------------------------
     # CreateStudyResponse : Study 생성 응답
