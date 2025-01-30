@@ -219,6 +219,41 @@ paths:
               schema:
                 $ref: "#/components/schemas/UpdateStudyPracticeResponse"
 
+  /study/{studyId}/practice/{studyPracticeId}/retry:
+    put:
+      tags:
+        - study
+      summary: "재시도를 위해 문제에 맞는 유저의 답변을 받아 정답(기존에 생성됨), 점수, 팁(피드백) 제공"
+      parameters:
+        - name: studyId
+          in: path
+          description: "The ID of the study"
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: studyPracticeId
+          in: path
+          description: "The ID of the study practice"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      operationId: updateStudyPracticeRetry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateStudyPracticeRequest"
+      responses:
+        "201":
+          description: "재시도를 위한 점수, 팁(피드백) 생성 성공"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateStudyPracticeResponse"
+
 components:
   schemas:
     # -----------------------------------------------------------
