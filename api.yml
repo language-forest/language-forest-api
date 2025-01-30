@@ -181,7 +181,11 @@ paths:
                   type: string
       responses:
         "202":
-          description: 변경에 성공합니다.
+          description: 변경에 성공하고 변경된 값을 프론트에 내려줍니다.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseUserNotification"
         "404":
           description: 해당 알림을 찾을 수 없음
           content:
