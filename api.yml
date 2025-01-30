@@ -183,6 +183,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateStudyPracticeResponse"
+    put:
+      tags:
+        - study
+      summary: "학습 완료 후 평균 점수 산정 및 학습 상태 변경"
+      parameters:
+        - name: studyId
+          in: path
+          description: "The ID of the study"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      operationId: completeStudyPractice
+      responses:
+        "201":
+          description: "학습 완료 성공"
 
   /study/{studyId}/practice/{studyPracticeId}:
     put:
