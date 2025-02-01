@@ -535,6 +535,10 @@ components:
           type: number
           format: double
           description: "전체 점수 평균"
+        point:
+          type: integer
+          format: int32
+          description: "학습 완료로 획득한 재화의 양"
         studyStatus:
           $ref: "#/components/schemas/StudyStatusEnum"
           description: "학습 상태"
