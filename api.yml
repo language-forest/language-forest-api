@@ -364,6 +364,11 @@ components:
       enum: [PENDING, COMPLETED]
       description: "학습의 완료 여부를 구분하는 enum입니다."
 
+    PracticeTypeEnum:
+      type: string
+      enum: [FIRST, RETRY]
+      description: "practice가 초기 시도인지 재시도인지 구분하는 enum입니다."
+
     # -----------------------------------------------------------
     # BaseUser : UserEntity가 가진 주요 필드
     # (nickname, language 등을 포함)
