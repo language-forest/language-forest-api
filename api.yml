@@ -17,8 +17,28 @@ paths:
             schema:
               $ref: "#/components/schemas/GoogleLoginRequest"
       responses:
-        "200":
-          description: "JWT 토큰 발급 성공"
+        "201":
+          description: JWT 토큰 발급 성공
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenDto"
+
+  /auth/apple:
+    post:
+      tags:
+        - auth
+      summary: "apple 로그인을 요청합니다."
+      operationId: "appleLogin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppleLoginRequest"
+      responses:
+        "201":
+          description: JWT 토큰 발급 성공
           content:
             application/json:
               schema:
@@ -103,6 +123,109 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserResponse"
+    patch:
+      tags:
+        - user
+      summary: 유저의 정보를 변경합니다. 아직은 큰 차이 없으니 온보딩에서 사용한 schema를 재사용합니다.
+      operationId: updateUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        "201":
+          description: "유저 update 성공"
+
+  /user/me/social:
+    get:
+      tags:
+        - user
+      summary: 유저의 소셜 로그인 정보를 가져옵니다.
+      description: 딱히 다른 곳에서 사용하지 않을 정보이기 때문에 그냥 email만 반환하는 식으로 구현합니다.
+      operationId: getUserMeSocial
+      responses:
+        "200":
+          description: 유저 소셜 로그인 정보 반환 성공
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserSocialResponse"
+
+  /user/me/notification/{notification}:
+    get:
+      tags:
+        - user
+      summary: 유저의 notification 중 특정 enum값을 가져옵니다
+      operationId: getUserMeNotification
+      parameters:
+        - name: notification
+          in: path
+          required: true
+          description: 가져올 알림 유형
+          schema:
+            $ref: "#/components/schemas/NotificationEnum"
+      responses:
+        "200":
+          description: 푸시에 대한 유저의 설정 정보를 가져옵니다.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseUserNotification"
+        "404":
+          description: 해당 notification 설정을 찾을 수 없음
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    patch:
+      tags:
+        - user
+      summary: 유저의 특정 알림(notification) 활성화 여부를 변경합니다. 이때 프론트에서 넘겨주는 값으로 변경합니다.
+      operationId: updateUserNotification
+      parameters:
+        - name: notification
+          in: path
+          required: true
+          description: 변경할 알림 유형
+          schema:
+            $ref: "#/components/schemas/NotificationEnum"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isActive:
+                  type: boolean
+                cron:
+                  type: string
+      responses:
+        "202":
+          description: 변경에 성공하고 변경된 값을 프론트에 내려줍니다.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseUserNotification"
+        "404":
+          description: 해당 알림을 찾을 수 없음
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /user/me/delete:
+    post:
+      tags:
+        - user
+      summary: 회원탈퇴를 진행합니다.
+      operationId: userMeDelete
+      responses:
+        "201":
+          description: 회원 탈퇴에 성공합니다.
 
   /study:
     post:
@@ -385,6 +508,8 @@ components:
         language:
           $ref: "#/components/schemas/LanguageEnum"
           description: "대표 언어 (필수)"
+        profileImage:
+          type: string
       required: [uid, nickname, language]
 
     # -----------------------------------------------------------
@@ -493,7 +618,9 @@ components:
           $ref: "#/components/schemas/NotificationEnum"
         cron:
           type: string
-      required: [uid, notificationPreference, cron]
+        isActive:
+          type: boolean
+      required: [uid, notificationPreference, cron, isActive]
 
     # -----------------------------------------------------------
     # BaseStudy : StudyEntity가 가진 필드들
@@ -672,6 +799,24 @@ components:
           description: "학습할 언어"
       required: [level, language]
 
+    UpdateUserStudyInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        level:
+          $ref: "#/components/schemas/LevelEnum"
+          description: "학습 난이도"
+        voiceType:
+          $ref: "#/components/schemas/VoiceTypeEnum"
+          description: "ai 목소리 타입"
+        sentenceAmount:
+          type: integer
+          format: int32
+          description: "학습할 문장 수"
+      required: [id]
+
     # -----------------------------------------------------------
     # 유저 노티피케이션을 생성합니다.
     # -----------------------------------------------------------
@@ -700,6 +845,16 @@ components:
         userNotification:
           $ref: "#/components/schemas/CreateUserNotification"
       required: [user, userInfo, userStudyInfo, userNotification]
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/UpdateUser"
+        userInfo:
+          $ref: "#/components/schemas/UpdateUserInfo"
+        userStudyInfo:
+          $ref: "#/components/schemas/UpdateUserStudyInfo"
 
     # -----------------------------------------------------------
     # 스터디를 생성합니다.
@@ -783,6 +938,20 @@ components:
           properties:
             userPoint:
               $ref: "#/components/schemas/BaseUserPoint"
+
+    UserSocialResponse:
+      type: object
+      properties:
+        google:
+          type: object
+          properties:
+            email:
+              type: string
+        apple:
+          type: object
+          properties:
+            email:
+              type: string
 
     # -----------------------------------------------------------
     # StudyResponse : Study 조회 응답
@@ -900,6 +1069,44 @@ components:
           $ref: "#/components/schemas/TokenDto"
       required: [language, token]
 
+    AppleLoginRequest:
+      type: object
+      properties:
+        language:
+          type: string
+          description: "디바이스의 언어를 가져옵니다."
+        appleId:
+          type: string
+          description: 애플 로그인의 정보 중 'user'값을 가져옵니다.
+        email:
+          type: string
+          description: email값을 가져옵니다. (비공개 여부와 관계 없이 요청합니다.)
+        familyName:
+          type: string
+          description: fullName 중 familyName을 의미합니다.
+        givenName:
+          type: string
+          description: fullName 중 givenName을 의미합니다.
+        middleName:
+          type: string
+          description: fullName 중 middleName을 의미합니다.
+        namePrefix:
+          type: string
+          description: fullName 중 namePrefix을 의미합니다.
+        nameSuffix:
+          type: string
+          description: fullName 중 nameSuffix을 의미합니다.
+        nickname:
+          type: string
+          description: fullName 중 nickname을 의미합니다.
+        nonce:
+          type: string
+        realUserStatus:
+          type: integer
+        state:
+          type: string
+      required: [language, appleId]
+
     # -----------------------------------------------------------
     # JWT 토큰 DTO
     # -----------------------------------------------------------
@@ -911,3 +1118,13 @@ components:
         refreshToken:
           type: string
       required: [accessToken]
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          description: HTTP 상태 코드
+        message:
+          type: string
+          description: 에러 메시지
