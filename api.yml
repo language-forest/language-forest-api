@@ -124,7 +124,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/CreateStudyResponse"
     get:
+      tags:
+        - study
       summary: "연도와 월에 해당하는 학습 정보를 가져옵니다."
+      operationId: "getMontlyStudy"
       parameters:
         - name: year
           in: query
