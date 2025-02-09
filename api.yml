@@ -833,8 +833,10 @@ components:
           type: string
           description: "하루 일지 기반 이모티콘"
         tags:
-          type: string
+          type: array
           description: "하루 일지 기반 4가지 키워드"
+          items:
+            type: string
 
     # -----------------------------------------------------------
     # CreateStudyPracticeResponse : StudyPractice 생성 응답
