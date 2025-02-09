@@ -200,6 +200,22 @@ paths:
       responses:
         "201":
           description: "학습 일기 수정 성공"
+    delete:
+      tags:
+        - study
+      summary: "학습을 삭제합니다."
+      parameters:
+        - name: studyId
+          in: path
+          description: "The ID of the study"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      operationId: deleteStudy
+      responses:
+        "201":
+          description: "학습 삭제 성공"
 
   /study/{studyId}/summary:
     post:
