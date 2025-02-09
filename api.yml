@@ -246,6 +246,33 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateStudyResponse"
+    get:
+      tags:
+        - study
+      summary: "연도와 월에 해당하는 학습 정보를 가져옵니다."
+      operationId: "getMontlyStudy"
+      parameters:
+        - name: year
+          in: query
+          description: "연도"
+          required: true
+          schema:
+            type: integer
+            example: 2025
+        - name: month
+          in: query
+          description: "월"
+          required: true
+          schema:
+            type: integer
+            example: 2
+      responses:
+        "200":
+          description: "연도와 월에 해당하는 학습 정보 반환 성공"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MonthlyStudyResponse"
 
   /study/{studyId}:
     get:
@@ -268,6 +295,50 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/StudyResponse"
+    put:
+      tags:
+        - study
+      summary: "학습의 유저 학습 일기를 수정합니다."
+      parameters:
+        - name: studyId
+          in: path
+          description: "The ID of the study"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      operationId: updateStudy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                story:
+                  type: string
+                  description: "유저의 학습 일기"
+              required:
+                - story
+      responses:
+        "201":
+          description: "학습 일기 수정 성공"
+    delete:
+      tags:
+        - study
+      summary: "학습을 삭제합니다."
+      parameters:
+        - name: studyId
+          in: path
+          description: "The ID of the study"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      operationId: deleteStudy
+      responses:
+        "201":
+          description: "학습 삭제 성공"
 
   /study/{studyId}/summary:
     post:
@@ -674,6 +745,7 @@ components:
         studyStatus:
           $ref: "#/components/schemas/StudyStatusEnum"
           description: "학습 상태"
+      required: [id, uid, userStudyInfoId, voiceType, level, sentenceAmount, language, startQuestion, inputType, story, averageScore, point, studyStatus]
 
     # -----------------------------------------------------------
     # BaseStudySummary : StudySummaryEntity가 가진 필드들
@@ -697,11 +769,14 @@ components:
           type: string
           description: "하루 일지 기반 이모티콘"
         tags:
-          type: string
+          type: array
           description: "하루 일지 기반 4가지 키워드"
+          items:
+            type: string
         selectedTag:
           type: string
           description: "유저가 선택한 키워드"
+      required: [id, studyId, summary, message, emoji, tags, selectedTag]
 
     # -----------------------------------------------------------
     # BaseStudyPractice : StudyPracticeEntity가 가진 필드들
@@ -737,6 +812,7 @@ components:
         score:
           type: integer
           description: "점수"
+      required: [id, studyId, problemNumber, problem, correctAnswer, myAnswer, tip, score]
 
     # -----------------------------------------------------------
     # 유저 정보중 업데이트 가능한 것들을 모두 널러블로 열어둡니다.
@@ -975,6 +1051,27 @@ components:
                 type: object
                 $ref: "#/components/schemas/BaseStudyPractice"
 
+    MonthlyStudyResponse:
+      properties:
+        studies:
+          type: array
+          items:
+            type: object
+            properties:
+              studyDate:
+                type: string
+                format: date
+                description: "학습 날짜"
+              studyId:
+                type: string
+                format: uuid
+              selectedTag:
+                type: string
+                description: "제시된 태그들 중 유저가 선택한 태그"
+              emoji:
+                type: string
+                description: "하루 일지 기반 이모티콘"
+
     # -----------------------------------------------------------
     # CreateStudyResponse : Study 생성 응답
     # -----------------------------------------------------------
@@ -1002,8 +1099,10 @@ components:
           type: string
           description: "하루 일지 기반 이모티콘"
         tags:
-          type: string
+          type: array
           description: "하루 일지 기반 4가지 키워드"
+          items:
+            type: string
 
     # -----------------------------------------------------------
     # CreateStudyPracticeResponse : StudyPractice 생성 응답
