@@ -547,6 +547,7 @@ components:
         studyStatus:
           $ref: "#/components/schemas/StudyStatusEnum"
           description: "학습 상태"
+      required: [id, uid, userStudyInfoId, voiceType, level, sentenceAmount, language, startQuestion, inputType, story, averageScore, point, studyStatus]
 
     # -----------------------------------------------------------
     # BaseStudySummary : StudySummaryEntity가 가진 필드들
@@ -577,6 +578,7 @@ components:
         selectedTag:
           type: string
           description: "유저가 선택한 키워드"
+      required: [id, studyId, summary, message, emoji, tags, selectedTag]
 
     # -----------------------------------------------------------
     # BaseStudyPractice : StudyPracticeEntity가 가진 필드들
@@ -612,6 +614,7 @@ components:
         score:
           type: integer
           description: "점수"
+      required: [id, studyId, problemNumber, problem, correctAnswer, myAnswer, tip, score]
 
     # -----------------------------------------------------------
     # 유저 정보중 업데이트 가능한 것들을 모두 널러블로 열어둡니다.
