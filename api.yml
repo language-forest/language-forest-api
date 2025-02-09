@@ -123,6 +123,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateStudyResponse"
+    get:
+      summary: "연도와 월에 해당하는 학습 정보를 가져옵니다."
+      parameters:
+        - name: year
+          in: query
+          description: "연도"
+          required: true
+          schema:
+            type: integer
+            example: 2025
+        - name: month
+          in: query
+          description: "월"
+          required: true
+          schema:
+            type: integer
+            example: 2
+      responses:
+        "200":
+          description: "연도와 월에 해당하는 학습 정보 반환 성공"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MonthlyStudyResponse"
 
   /study/{studyId}:
     get:
@@ -810,6 +834,23 @@ components:
               items:
                 type: object
                 $ref: "#/components/schemas/BaseStudyPractice"
+
+    MonthlyStudyResponse:
+      properties:
+        studies:
+          type: array
+          items:
+            type: object
+            properties:
+              studyId:
+                type: string
+                format: uuid
+              selectedTag:
+                type: string
+                description: "제시된 태그들 중 유저가 선택한 태그"
+              emoji:
+                type: string
+                description: "하루 일지 기반 이모티콘"
 
     # -----------------------------------------------------------
     # CreateStudyResponse : Study 생성 응답
