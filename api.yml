@@ -172,6 +172,34 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/StudyResponse"
+    put:
+      tags:
+        - study
+      summary: "학습의 유저 학습 일기를 수정합니다."
+      parameters:
+        - name: studyId
+          in: path
+          description: "The ID of the study"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      operationId: updateStudy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                story:
+                  type: string
+                  description: "유저의 학습 일기"
+              required:
+                - story
+      responses:
+        "201":
+          description: "학습 일기 수정 성공"
 
   /study/{studyId}/summary:
     post:
