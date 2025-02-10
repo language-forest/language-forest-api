@@ -64,11 +64,35 @@ paths:
                 - refreshToken
       responses:
         "200":
-          description: JWT 토큰 발급 성공
+          description: "JWT 토큰 발급 성공"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/TokenDto"
+
+  /auth/dummy:
+    post:
+      tags:
+        - auth
+      summary: "dummy 로그인을 요청합니다."
+      operationId: "dummyLogin"
+      responses:
+        "200":
+          description: "JWT 토큰 발급 성공"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenDto"
+
+  /user/dummy:
+    post:
+      tags:
+        - user
+      summary: "더미 유저를 생성합니다."
+      operationId: "createDummy"
+      responses:
+        "201":
+          description: "더미 유저 생성 성공"
 
   /user:
     post:
@@ -203,6 +227,265 @@ paths:
         "201":
           description: 회원 탈퇴에 성공합니다.
 
+  /study:
+    post:
+      tags:
+        - study
+      summary: "새로운 스터디를 생성합니다."
+      operationId: "createStudy"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateStudyRequest"
+      responses:
+        "201":
+          description: "스터디 생성 성공"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateStudyResponse"
+    get:
+      tags:
+        - study
+      summary: "연도와 월에 해당하는 학습 정보를 가져옵니다."
+      operationId: "getMontlyStudy"
+      parameters:
+        - name: year
+          in: query
+          description: "연도"
+          required: true
+          schema:
+            type: integer
+            example: 2025
+        - name: month
+          in: query
+          description: "월"
+          required: true
+          schema:
+            type: integer
+            example: 2
+      responses:
+        "200":
+          description: "연도와 월에 해당하는 학습 정보 반환 성공"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MonthlyStudyResponse"
+
+  /study/{studyId}:
+    get:
+      tags:
+        - study
+      summary: "학습 결과 정보를 가져옵니다."
+      parameters:
+        - name: studyId
+          in: path
+          description: "The ID of the study"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      operationId: getStudy
+      responses:
+        "200":
+          description: "학습 결과 정보 반환 성공"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudyResponse"
+    put:
+      tags:
+        - study
+      summary: "학습의 유저 학습 일기를 수정합니다."
+      parameters:
+        - name: studyId
+          in: path
+          description: "The ID of the study"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      operationId: updateStudy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                story:
+                  type: string
+                  description: "유저의 학습 일기"
+              required:
+                - story
+      responses:
+        "201":
+          description: "학습 일기 수정 성공"
+    delete:
+      tags:
+        - study
+      summary: "학습을 삭제합니다."
+      parameters:
+        - name: studyId
+          in: path
+          description: "The ID of the study"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      operationId: deleteStudy
+      responses:
+        "201":
+          description: "학습 삭제 성공"
+
+  /study/{studyId}/summary:
+    post:
+      tags:
+        - study
+      summary: "유저 일기를 요약하고 태그, 이모티콘 등을 만들어 제공합니다."
+      parameters:
+        - name: studyId
+          in: path
+          description: "The ID of the study"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      operationId: createStudySummary
+      responses:
+        "201":
+          description: "유저 일기 요약, 메시지, 태그, 이모티콘 생성 성공"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateStudySummaryResponse"
+
+  /study/{studyId}/practice:
+    post:
+      tags:
+        - study
+      summary: "유저가 선택한 태그를 저장하고 유저가 선택했던 레벨과 개수, 언어에 맞는 문제를 생성해 제공합니다."
+      parameters:
+        - name: studyId
+          in: path
+          description: "The ID of the study"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      operationId: createStudyPractice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                studySummaryId:
+                  type: string
+                  format: uuid
+                selectedTag:
+                  type: string
+                  description: "제시된 태그들 중 유저가 선택한 태그"
+              required:
+                - studySummaryId
+                - selectedTag
+      responses:
+        "201":
+          description: "태그 저장 및 문제 생성 성공"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateStudyPracticeResponse"
+    put:
+      tags:
+        - study
+      summary: "학습 완료 후 평균 점수 산정 및 학습 상태 변경"
+      parameters:
+        - name: studyId
+          in: path
+          description: "The ID of the study"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      operationId: completeStudyPractice
+      responses:
+        "201":
+          description: "학습 완료 성공"
+
+  /study/{studyId}/practice/{studyPracticeId}:
+    put:
+      tags:
+        - study
+      summary: "문제에 맞는 유저의 답변을 받아 정답, 점수, 팁(피드백) 제공"
+      parameters:
+        - name: studyId
+          in: path
+          description: "The ID of the study"
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: studyPracticeId
+          in: path
+          description: "The ID of the study practice"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      operationId: updateStudyPractice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateStudyPracticeRequest"
+      responses:
+        "201":
+          description: "정답, 점수, 팁(피드백) 생성 성공"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateStudyPracticeResponse"
+
+  /study/{studyId}/practice/{studyPracticeId}/retry:
+    put:
+      tags:
+        - study
+      summary: "재시도를 위해 문제에 맞는 유저의 답변을 받아 정답(기존에 생성됨), 점수, 팁(피드백) 제공"
+      parameters:
+        - name: studyId
+          in: path
+          description: "The ID of the study"
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: studyPracticeId
+          in: path
+          description: "The ID of the study practice"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      operationId: updateStudyPracticeRetry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateStudyPracticeRequest"
+      responses:
+        "201":
+          description: "재시도를 위한 점수, 팁(피드백) 생성 성공"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateStudyPracticeResponse"
+
 components:
   schemas:
     # -----------------------------------------------------------
@@ -264,6 +547,21 @@ components:
       type: string
       enum: [A, B, C]
       description: "ai 목소리에 맵핑되는 enum입니다."
+
+    InputTypeEnum:
+      type: string
+      enum: [ SPEAKING, WRITING ]
+      description: "유저가 study를 위해 문장을 넣는 방식을 구분하는 enum입니다."
+
+    StudyStatusEnum:
+      type: string
+      enum: [PENDING, COMPLETED]
+      description: "학습의 완료 여부를 구분하는 enum입니다."
+
+    PracticeTypeEnum:
+      type: string
+      enum: [FIRST, RETRY]
+      description: "practice가 초기 시도인지 재시도인지 구분하는 enum입니다."
 
     # -----------------------------------------------------------
     # BaseUser : UserEntity가 가진 주요 필드
@@ -396,6 +694,127 @@ components:
       required: [uid, notificationPreference, cron, isActive]
 
     # -----------------------------------------------------------
+    # BaseStudy : StudyEntity가 가진 필드들
+    # -----------------------------------------------------------
+    BaseStudy:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        uid:
+          type: string
+          format: uuid
+        userStudyInfoId:
+          type: string
+          format: uuid
+        voiceType:
+          $ref: "#/components/schemas/VoiceTypeEnum"
+          description: "ai 목소리 타입"
+        level:
+          $ref: "#/components/schemas/LevelEnum"
+          description: "학습 난이도"
+        sentenceAmount:
+          type: integer
+          format: int32
+          description: "학습할 문장 수"
+        language:
+          $ref: "#/components/schemas/LanguageEnum"
+          description: "지금 내가 학습하는 언어"
+        startQuestion:
+          type: string
+          description: "시작 질문"
+        inputType:
+          $ref: "#/components/schemas/InputTypeEnum"
+          description: "문장 입력 타입"
+        story:
+          type: string
+          description: "유저의 하루 일기"
+        storyVoicePath:
+          type: string
+          description: "유저의 하루 일기 음성 파일 경로"
+          nullable: true
+        averageScore:
+          type: number
+          format: double
+          description: "전체 점수 평균"
+        point:
+          type: integer
+          format: int32
+          description: "학습 완료로 획득한 재화의 양"
+        studyStatus:
+          $ref: "#/components/schemas/StudyStatusEnum"
+          description: "학습 상태"
+      required: [id, uid, userStudyInfoId, voiceType, level, sentenceAmount, language, startQuestion, inputType, story, averageScore, point, studyStatus]
+
+    # -----------------------------------------------------------
+    # BaseStudySummary : StudySummaryEntity가 가진 필드들
+    # -----------------------------------------------------------
+    BaseStudySummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        studyId:
+          type: string
+          format: uuid
+        summary:
+          type: string
+          description: "하루 일지 한 문장 요약"
+        message:
+          type: string
+          description: "하루 일지 150자 이내 요약"
+        emoji:
+          type: string
+          description: "하루 일지 기반 이모티콘"
+        tags:
+          type: array
+          description: "하루 일지 기반 4가지 키워드"
+          items:
+            type: string
+        selectedTag:
+          type: string
+          description: "유저가 선택한 키워드"
+      required: [id, studyId, summary, message, emoji, tags, selectedTag]
+
+    # -----------------------------------------------------------
+    # BaseStudyPractice : StudyPracticeEntity가 가진 필드들
+    # -----------------------------------------------------------
+    BaseStudyPractice:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        studyId:
+          type: string
+          format: uuid
+        problemNumber:
+          type: integer
+          description: "문제 번호"
+        problem:
+          type: string
+          description: "문제"
+        correctAnswer:
+          type: string
+          description: "정답"
+        myAnswer:
+          type: string
+          description: "유저의 답변"
+        myAnswerVoicePath:
+          type: string
+          description: "유저의 답변 음성 파일 경로"
+          nullable: true
+        tip:
+          type: string
+          description: "팁(피드백)"
+        score:
+          type: integer
+          description: "점수"
+      required: [id, studyId, problemNumber, problem, correctAnswer, myAnswer, tip, score]
+
+    # -----------------------------------------------------------
     # 유저 정보중 업데이트 가능한 것들을 모두 널러블로 열어둡니다.
     # -----------------------------------------------------------
     UpdateUser:
@@ -514,6 +933,65 @@ components:
           $ref: "#/components/schemas/UpdateUserStudyInfo"
 
     # -----------------------------------------------------------
+    # 스터디를 생성합니다.
+    # -----------------------------------------------------------
+    CreateStudy:
+      type: object
+      properties:
+        userStudyInfoId:
+          type: string
+          format: uuid
+        startQuestion:
+          type: string
+          description: "시작 질문"
+        inputType:
+          $ref: "#/components/schemas/InputTypeEnum"
+          description: "문장 입력 타입"
+        story:
+          type: string
+          description: "유저의 하루 일기"
+        storyVoicePath:
+          type: string
+          description: "유저의 하루 일기 음성 파일 경로"
+          nullable: true
+      required: [ userStudyInfoId, startQuestion, inputType, story ]
+
+    # -----------------------------------------------------------
+    # CreateStudyRequest : Study 생성 요청
+    # -----------------------------------------------------------
+    CreateStudyRequest:
+      type: object
+      properties:
+        study:
+          $ref: "#/components/schemas/CreateStudy"
+      required: [ study ]
+
+    # -----------------------------------------------------------
+    # StudyPractice를 생성합니다.
+    # -----------------------------------------------------------
+    UpdateStudyPractice:
+      type: object
+      properties:
+        myAnswer:
+          type: string
+          description: "유저의 답변"
+        myAnswerVoicePath:
+          type: string
+          description: "유저의 답변 음성 파일 경로"
+          nullable: true
+      required: [ myAnswer ]
+
+    # -----------------------------------------------------------
+    # UpdateStudyPracticeRequest : StudyPractice 수정 요청
+    # -----------------------------------------------------------
+    UpdateStudyPracticeRequest:
+      type: object
+      properties:
+        studyPractice:
+          $ref: "#/components/schemas/UpdateStudyPractice"
+      required: [ studyPractice ]
+
+    # -----------------------------------------------------------
     # UserResponse : User 조회 응답
     #  => Timestamped + BaseUser + BaseUserInfo
     #  => uid 같은 PK를 추가할 수도 있음
@@ -550,6 +1028,131 @@ components:
           properties:
             email:
               type: string
+
+    # -----------------------------------------------------------
+    # StudyResponse : Study 조회 응답
+    #  => BaseStudy + BaseStudySummary + Array<BaseStudyPractice>
+    # -----------------------------------------------------------
+    StudyResponse:
+      allOf:
+        - type: object
+          properties:
+            study:
+              $ref: "#/components/schemas/BaseStudy"
+        - type: object
+          properties:
+            studySummary:
+              $ref: "#/components/schemas/BaseStudySummary"
+        - type: object
+          properties:
+            studyPractices:
+              type: array
+              items:
+                type: object
+                $ref: "#/components/schemas/BaseStudyPractice"
+
+    MonthlyStudyResponse:
+      properties:
+        studies:
+          type: array
+          items:
+            type: object
+            properties:
+              studyDate:
+                type: string
+                format: date
+                description: "학습 날짜"
+              studyId:
+                type: string
+                format: uuid
+              selectedTag:
+                type: string
+                description: "제시된 태그들 중 유저가 선택한 태그"
+              emoji:
+                type: string
+                description: "하루 일지 기반 이모티콘"
+
+    # -----------------------------------------------------------
+    # CreateStudyResponse : Study 생성 응답
+    # -----------------------------------------------------------
+    CreateStudyResponse:
+      properties:
+        studyId:
+          type: string
+          format: uuid
+
+    # -----------------------------------------------------------
+    # CreateStudySummaryResponse : StudySummary 생성 응답
+    # -----------------------------------------------------------
+    CreateStudySummaryResponse:
+      properties:
+        studySummaryId:
+          type: string
+          format: uuid
+        summary:
+          type: string
+          description: "하루 일지 한 문장 요약"
+        message:
+          type: string
+          description: "하루 일지 150자 이내 요약"
+        emoji:
+          type: string
+          description: "하루 일지 기반 이모티콘"
+        tags:
+          type: array
+          description: "하루 일지 기반 4가지 키워드"
+          items:
+            type: string
+
+    # -----------------------------------------------------------
+    # CreateStudyPracticeResponse : StudyPractice 생성 응답
+    # -----------------------------------------------------------
+    CreateStudyPracticeResponse:
+      properties:
+        studyPractices:
+          type: array
+          items:
+            type: object
+            properties:
+              studyPracticeId:
+                type: string
+                format: uuid
+              problemNumber:
+                type: integer
+                description: "문제 번호"
+              problem:
+                type: string
+                description: "문제"
+
+    # -----------------------------------------------------------
+    # UpdateStudyPracticeResponse : StudyPractice 수정 응답
+    # -----------------------------------------------------------
+    UpdateStudyPracticeResponse:
+      properties:
+        studyPractice:
+          type: object
+          properties:
+            problemNumber:
+              type: integer
+              description: "문제 번호"
+            problem:
+              type: string
+              description: "문제"
+            myAnswer:
+              type: string
+              description: "유저 답변"
+            myAnswerVoicePath:
+              type: string
+              description: "유저 답변 링크"
+            correctAnswer:
+              type: string
+              description: "정답"
+            score:
+              type: integer
+              description: "점수"
+            tip:
+              type: string
+              description: "팁(피드백)"
 
     # -----------------------------------------------------------
     # GoogleLoginRequest :
